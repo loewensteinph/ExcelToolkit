@@ -72,6 +72,21 @@ namespace toolkit.excel.data
             }
             return true;
         }
+        private bool CheckWorkSheet(ExcelWorksheet sheet)
+        {
+            try
+            {
+                var wsCol = sheet.Cells[Definition.Range];
+            }
+            catch (Exception ex)
+            {
+                Log.Error(
+                    string.Format("Error accessing Range: '{0}' in Workbook: '{1}' Sheet: '{2}'", Definition.Range,
+                        Definition.FileName, sheet.Name), ex);
+                return false;
+            }
+            return true;
+        }
 
         public DataTable Read()
         {
@@ -83,10 +98,7 @@ namespace toolkit.excel.data
                 ExcelWorksheet ws = GetExcelWorksheet(pck);
 
                 if (ws == null)
-                    ws = pck.Workbook.Worksheets[0];
-
-                if (ws == null)
-                    throw new NullReferenceException();
+                    return null;
 
                 if (!CheckRange(ws))
                     return null;
@@ -128,12 +140,21 @@ namespace toolkit.excel.data
 
         private ExcelWorksheet GetExcelWorksheet(ExcelPackage pck)
         {
+            ExcelWorksheet ws;
             using (FileStream stream = File.OpenRead(Definition.FileName))
             {
                 pck.Load(stream);
             }
+            try
+            {
+                ws = pck.Workbook.Worksheets[Definition.SheetName];
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Worksheet not found!",ex);
+                return null;
+            }
 
-            var ws = pck.Workbook.Worksheets[Definition.SheetName];
             return ws;
         }
 
