@@ -1,0 +1,15 @@
+c:\users\philip\documents\visual studio 2017\Projects\ExcelToolkit\toolkit.excel.data\bin\Debug\toolkit.excel.data.dll
+c:\users\philip\documents\visual studio 2017\Projects\ExcelToolkit\toolkit.excel.data\bin\Debug\toolkit.excel.data.pdb
+c:\users\philip\documents\visual studio 2017\Projects\ExcelToolkit\toolkit.excel.data\bin\Debug\DocumentFormat.OpenXml.dll
+c:\users\philip\documents\visual studio 2017\Projects\ExcelToolkit\toolkit.excel.data\bin\Debug\EPPlus.dll
+c:\users\philip\documents\visual studio 2017\Projects\ExcelToolkit\toolkit.excel.data\bin\Debug\ICSharpCode.SharpZipLib.dll
+c:\users\philip\documents\visual studio 2017\Projects\ExcelToolkit\toolkit.excel.data\bin\Debug\NPOI.dll
+c:\users\philip\documents\visual studio 2017\Projects\ExcelToolkit\toolkit.excel.data\bin\Debug\NPOI.OOXML.dll
+c:\users\philip\documents\visual studio 2017\Projects\ExcelToolkit\toolkit.excel.data\bin\Debug\NPOI.OpenXml4Net.dll
+c:\users\philip\documents\visual studio 2017\Projects\ExcelToolkit\toolkit.excel.data\bin\Debug\NPOI.OpenXmlFormats.dll
+c:\users\philip\documents\visual studio 2017\Projects\ExcelToolkit\toolkit.excel.data\bin\Debug\DocumentFormat.OpenXml.xml
+c:\users\philip\documents\visual studio 2017\Projects\ExcelToolkit\toolkit.excel.data\bin\Debug\EPPlus.xml
+c:\users\philip\documents\visual studio 2017\Projects\ExcelToolkit\toolkit.excel.data\bin\Debug\NPOI.xml
+c:\users\philip\documents\visual studio 2017\Projects\ExcelToolkit\toolkit.excel.data\obj\Debug\toolkit.excel.data.dll
+c:\users\philip\documents\visual studio 2017\Projects\ExcelToolkit\toolkit.excel.data\obj\Debug\toolkit.excel.data.pdb
+C:\Users\Philip\documents\visual studio 2017\Projects\ExcelToolkit\toolkit.excel.data\obj\Debug\toolkit.excel.data.csprojResolveAssemblyReference.cache
