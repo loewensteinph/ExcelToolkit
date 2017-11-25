@@ -1,18 +1,41 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using toolkit.excel.data;
+﻿using toolkit.excel.data;
 
 namespace toolkit.excel.console
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
-            ExcelReader reader = new ExcelReader("","","",false);
-            reader.Read();
+            var reader = new ExcelReader("TestWB.xlsx", "Sheet1", "A1:L100000", true);
+            var result = reader.Read();
+
+            var table = TableHelper.CreateTable("", "TestTable", result);
+
+            var da = new DataAccess();
+
+            da.ProcessDefinitions();
+
+            /*
+            ExcelDefinition def = new ExcelDefinition();
+            def.FileName = "TestWB.xlsx";
+            def.SheetName = "Sheet1";
+            def.HasHeaderRow = true;
+            def.Range = "A1:L108";
+            def.TargetTable = "TestTable";
+            def.ConnectionString = "Data Source=.;Initial Catalog=ExcelDB;Integrated Security=true";
+
+            List<ColumnMapping> map = new List<ColumnMapping>();
+
+            map.Add(new ColumnMapping() {SourceColumn = "name" ,TargetColumn = "name"});
+            map.Add(new ColumnMapping() { SourceColumn = "object_id", TargetColumn = "object_id" });
+            map.Add(new ColumnMapping() { SourceColumn = "principal_id", TargetColumn = "principal_id" });
+            map.Add(new ColumnMapping() { SourceColumn = "create_date", TargetColumn = "create_date" });
+
+            def.ColumnMappings.AddRange(map);
+
+            dataContext.Entry(def).State = EntityState.Added;
+            dataContext.SaveChanges();
+            */
         }
     }
 }

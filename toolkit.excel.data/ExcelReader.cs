@@ -4,21 +4,26 @@ using System.Data;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using log4net;
 using OfficeOpenXml;
-using OfficeOpenXml.FormulaParsing;
-using OfficeOpenXml.FormulaParsing.Utilities;
-using OfficeOpenXml.Utils;
 
 namespace toolkit.excel.data
 {
     public class ExcelReader
     {
-        private static CultureInfo[] _cultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
-        private static HashSet<string> _patterns;
+        private ILog Log = LogManager.GetLogger(typeof(ExcelReader));
+
+        private readonly CultureInfo[] _cultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
+        private readonly HashSet<string> _patterns;
         public ExcelDefinition Definition;
+        private readonly DataTable _rawTbl = new DataTable();
+        private readonly DataTable _finalTbl = new DataTable();
 
         public ExcelReader(string fileName, string sheetName, string range, bool hasHeaderRow)
         {
+            Log = LogManager.GetLogger(typeof(ExcelReader));
+            Log.Info(string.Format("Starting Import: {0}", fileName));
+
             Definition = new ExcelDefinition
             {
                 Range = range,
@@ -34,18 +39,48 @@ namespace toolkit.excel.data
             }
         }
 
+        private bool CheckFilePath(string fileName)
+        {
+            try
+            {
+                if (!File.Exists(fileName))
+                {
+                    File.Open(fileName, FileMode.Open);
+                    return false;
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Log.Error(string.Format("File {0} not found!", fileName), ex);
+            }
+            return false;
+        }
+
+        private bool CheckRange(ExcelWorksheet sheet)
+        {
+            try
+            {
+                var wsCol = sheet.Cells[Definition.Range];
+            }
+            catch (Exception ex)
+            {
+                Log.Error(
+                    string.Format("Error accessing Range: '{0}' in Workbook: '{1}' Sheet: '{2}'", Definition.Range,
+                        Definition.FileName, sheet.Name), ex);
+                return false;
+            }
+            return true;
+        }
+
         public DataTable Read()
         {
-            var datatypes = new Dictionary<string, object>();
+            if (!CheckFilePath(Definition.FileName))
+                return null;
 
             using (var pck = new ExcelPackage())
             {
-                using (var stream = File.OpenRead(Definition.FileName))
-                {
-                    pck.Load(stream);
-                }
-
-                var ws = pck.Workbook.Worksheets[Definition.SheetName];
+                ExcelWorksheet ws = GetExcelWorksheet(pck);
 
                 if (ws == null)
                     ws = pck.Workbook.Worksheets[0];
@@ -53,101 +88,126 @@ namespace toolkit.excel.data
                 if (ws == null)
                     throw new NullReferenceException();
 
-                var rawTbl = new DataTable();
-                var finalTbl = new DataTable();
+                if (!CheckRange(ws))
+                    return null;
+                ExcelRange wsCol = ws.Cells[Definition.Range];
 
-                var wsCol = ws.Cells[Definition.Range];          
-                var startCol = wsCol.Start.Column;
-                var endCol = wsCol.End.Column;
-                var startRow = wsCol.Start.Row;
-                var endRow = wsCol.End.Row;
+                Int32 startCol = wsCol.Start.Column;
+                Int32 endCol = wsCol.End.Column;
+                Int32 startRow = wsCol.Start.Row;
+                Int32 endRow = wsCol.End.Row;
 
                 if (Definition.HasHeaderRow)
                 {
                     startRow = startRow + 1;
-                    endRow = endRow + 1;
                 }
 
                 if (Definition.HasHeaderRow)
-                {
-                    foreach (var firstRowCell in ws.Cells[startRow -1, startCol, startRow -1, endCol])
+                    foreach (var firstRowCell in ws.Cells[startRow - 1, startCol, startRow - 1, endCol])
                     {
-                        var col = new DataColumn(firstRowCell.Text);
-                        rawTbl.Columns.Add(col);
+                        DataColumn col = new DataColumn(firstRowCell.Text);
+                        _rawTbl.Columns.Add(col);
                     }
-                }
                 else
-                {
                     foreach (var firstRowCell in ws.Cells[startRow, startCol, startRow, endCol])
                     {
-                        var col = new DataColumn("Col" + firstRowCell.Start.Column);
-                        rawTbl.Columns.Add(col);
+                        DataColumn col = new DataColumn("Col" + firstRowCell.Start.Column);
+                        _rawTbl.Columns.Add(col);
                     }
-                }
 
                 // Check Datatypes
+                AddValuesToRawTable(startRow, endRow, _rawTbl, ws, startCol);
 
-                foreach (var col in rawTbl.Columns)
+                GetDataTypes(_rawTbl);
+
+                foreach (DataRow dr in _rawTbl.Rows)
+                    _finalTbl.ImportRow(dr);
+                return _finalTbl;
+            }
+        }
+
+        private ExcelWorksheet GetExcelWorksheet(ExcelPackage pck)
+        {
+            using (FileStream stream = File.OpenRead(Definition.FileName))
+            {
+                pck.Load(stream);
+            }
+
+            var ws = pck.Workbook.Worksheets[Definition.SheetName];
+            return ws;
+        }
+
+        private static void AddValuesToRawTable(Int32 startRow, Int32 endRow, DataTable rawTbl, ExcelWorksheet ws, Int32 startCol)
+        {
+            for (Int32 rowNum = startRow; rowNum <= endRow; rowNum++)
+            {
+                DataRow row = rawTbl.NewRow();
+
+                Int32 endColumn;
+
+                if (rawTbl.Columns.Count == 1)
+                    endColumn = 1;
+                else
                 {
-                    object currentDataType = typeof(string);
-                    var first = true;
-
-                    DataColumn curColumn = (DataColumn)col;
-                    int curColumnIndex = rawTbl.Columns.IndexOf(curColumn) + 1;
-                    var wsRow = ws.Cells[startRow, curColumnIndex, endRow, curColumnIndex];
-
-                    foreach (var wsCell in wsRow)
-                    {
-                        if (!wsCell.Text.Equals(string.Empty))
-                        {
-                            if (currentDataType != ParseString(wsCell.Text) && !first)
-                            {
-                                if (currentDataType.Equals(typeof(decimal)) &&
-                                    ParseString(wsCell.Text).Equals(typeof(long)))
-                                    break;
-                                currentDataType = typeof(string);
-                                break;
-                            }
-                            currentDataType = ParseString(wsCell.Text);
-                        }
-                        first = false;
-                    }
-                    datatypes.Add(curColumn.ColumnName, currentDataType);
-
+                    endColumn = rawTbl.Columns.Count + 1;
                 }
 
-                for (var rowNum = startRow; rowNum <= endRow; rowNum++)
+                ExcelRange wsRow = ws.Cells[rowNum, startCol, rowNum, endColumn];
+
+                Int32 cellsWithoutContent = 0;
+                foreach (ExcelRangeBase cell in wsRow)
                 {
-                    var row = rawTbl.NewRow();
-
-                    var wsRow = ws.Cells[rowNum, startCol, rowNum, rawTbl.Columns.Count + 1];
-                    var hascontent = false;
+                    if (String.IsNullOrEmpty(cell.Text) || String.IsNullOrWhiteSpace(cell.Text))
+                        cellsWithoutContent++;
+                }
+                if (rawTbl.Columns.Count - cellsWithoutContent > 0)
+                {
                     foreach (var cell in wsRow)
-                        if (!cell.Text.Equals(string.Empty))
-                            hascontent = true;
-                    if (hascontent)
-                        foreach (var cell in wsRow)
-                        {
-                            object colType;
-                            DataColumn dataColumn = rawTbl.Columns[cell.Start.Column - 1];
-
-
-                            datatypes.TryGetValue(dataColumn.ColumnName,
-                                out colType);
-                            if (!finalTbl.Columns.Contains(dataColumn.ColumnName))
-                                finalTbl.Columns.Add(dataColumn.ColumnName);
-                            finalTbl.Columns[cell.Start.Column - 1].DataType = colType as Type;
-                            row[dataColumn.ColumnName] = cell.Value;
-                            if (cell.Text.Equals("NULL"))
-                                row[cell.Start.Column - 1] = DBNull.Value;
-                            else
-                                row[cell.Start.Column - 1] = cell.Text;
-                        }
+                    {
+                        DataColumn dataColumn = rawTbl.Columns[cell.Start.Column - 1];
+                        row[dataColumn.ColumnName] = cell.Value;
+                        if (cell.Text.Equals("NULL"))
+                            row[cell.Start.Column - 1] = DBNull.Value;
+                        else
+                            row[cell.Start.Column - 1] = cell.Text;
+                    }
                     rawTbl.Rows.Add(row);
                 }
-                foreach (DataRow dr in rawTbl.Rows)
-                    finalTbl.ImportRow(dr);
-                return finalTbl;
+            }
+            rawTbl.Rows.Cast<DataRow>().ToList().FindAll(row => String.IsNullOrEmpty(String.Join("", row.ItemArray))).ForEach(Row =>
+                { rawTbl.Rows.Remove(Row); });
+        }
+
+        private void GetDataTypes(DataTable rawTbl)
+        {
+            foreach (DataColumn col in rawTbl.Columns)
+            {
+                object currentDataType = typeof(string);
+                bool first = true;
+
+                foreach (DataRow row in rawTbl.Rows)
+                {
+                    if (!String.IsNullOrEmpty(row.ToString()))
+                    {
+                        if (currentDataType != ParseString(row[col.ColumnName].ToString()) && !first)
+                        {
+                            if (currentDataType.Equals(typeof(decimal)) &&
+                                ParseString(row[col.ColumnName].ToString()).Equals(typeof(long)))
+                                break;
+                            currentDataType = typeof(string);
+                            break;
+                        }
+                        currentDataType = ParseString(row[col.ColumnName].ToString());
+                    }
+                    first = false;
+                }
+                DataColumn finalColumn = new DataColumn
+                {
+                    DataType = currentDataType as Type,
+                    ColumnName = col.ColumnName
+                };
+                if (!_finalTbl.Columns.Contains(finalColumn.ColumnName))
+                    _finalTbl.Columns.Add(finalColumn);
             }
         }
 
@@ -157,7 +217,7 @@ namespace toolkit.excel.data
             return Guid.TryParse(value, out x);
         }
 
-        public static object ParseString(string str)
+        public object ParseString(string str)
         {
             long intValue;
             decimal decimalValue;
