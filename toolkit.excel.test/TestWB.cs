@@ -13,7 +13,7 @@ namespace toolkit.excel.test
 
         public TestWB()
         {
-            reader = new ExcelReader("TestWB.xlsx", "Sheet1", "A1:L500", true);
+            reader = new ExcelReader(@"TestWorkbooks\TestWB.xlsx", "Sheet1", "A1:L500", true);
             result = reader.Read();
         }
 

@@ -31,11 +31,17 @@ namespace toolkit.excel.data
                 FileName = fileName,
                 HasHeaderRow = hasHeaderRow
             };
-            foreach (var culture in _cultures)
+
+            _patterns = new HashSet<string>();
+
+            foreach (var culture in _cultures.Where(c=>c.Name == "en-US" || c.Name == "de-DE"))
             {
-                _patterns = new HashSet<string>();
-                _cultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
-                _patterns.UnionWith(culture.DateTimeFormat.GetAllDateTimePatterns());
+                _patterns.UnionWith(culture.DateTimeFormat.GetAllDateTimePatterns('d'));
+                _patterns.UnionWith(culture.DateTimeFormat.GetAllDateTimePatterns('D'));
+                _patterns.UnionWith(culture.DateTimeFormat.GetAllDateTimePatterns('f'));
+                _patterns.UnionWith(culture.DateTimeFormat.GetAllDateTimePatterns('U'));
+                _patterns.UnionWith(culture.DateTimeFormat.GetAllDateTimePatterns('g'));
+                _patterns.UnionWith(culture.DateTimeFormat.GetAllDateTimePatterns('G'));
             }
         }
 
@@ -129,7 +135,6 @@ namespace toolkit.excel.data
 
                 // Check Datatypes
                 AddValuesToRawTable(startRow, endRow, _rawTbl, ws, startCol);
-
                 GetDataTypes(_rawTbl);
 
                 foreach (DataRow dr in _rawTbl.Rows)
@@ -221,6 +226,7 @@ namespace toolkit.excel.data
                         currentDataType = ParseString(row[col.ColumnName].ToString());
                     }
                     first = false;
+                    Log.Info(String.Format("Column {0} Row {1} DataType {2} identified Value {3}", col.ColumnName,row.Table.Rows.IndexOf(row), currentDataType, row[col.ColumnName].ToString()));
                 }
                 DataColumn finalColumn = new DataColumn
                 {
@@ -229,6 +235,7 @@ namespace toolkit.excel.data
                 };
                 if (!_finalTbl.Columns.Contains(finalColumn.ColumnName))
                     _finalTbl.Columns.Add(finalColumn);
+
             }
         }
 
@@ -245,16 +252,23 @@ namespace toolkit.excel.data
             Guid guidValue;
             bool boolValue;
             DateTime datetimeValue;
+
+            CultureInfo cultureinfo = new CultureInfo("de-DE");
+            CultureInfo cultureinfoUs = new CultureInfo("en-US");
+
             // Place checks higher if if-else statement to give higher priority to type.
             if (long.TryParse(str, out intValue))
                 return intValue.GetType();
-            if (DateTime.TryParseExact(str, _patterns.ToArray(), CultureInfo.InvariantCulture,
+            if (DateTime.TryParseExact(str, _patterns.ToArray(), cultureinfo,
                 DateTimeStyles.None, out datetimeValue))
                 return datetimeValue.GetType();
-            if (DateTime.TryParse(str, out datetimeValue))
+            if (DateTime.TryParseExact(str, _patterns.ToArray(), cultureinfoUs,
+                DateTimeStyles.None, out datetimeValue))
                 return datetimeValue.GetType();
             if (decimal.TryParse(str, out decimalValue))
                 return decimalValue.GetType();
+            if (DateTime.TryParse(str, out datetimeValue))
+                return datetimeValue.GetType();
             if (Guid.TryParse(str, out guidValue))
                 return guidValue.GetType();
             if (bool.TryParse(str, out boolValue))

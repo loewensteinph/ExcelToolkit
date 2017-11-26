@@ -77,33 +77,16 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <Compile Include="DAL\DataAccess.cs" />
-    <Compile Include="Migrations\201711251041145_initial2.cs" />
-    <Compile Include="Migrations\201711251041145_initial2.Designer.cs">
-      <DependentUpon>201711251041145_initial2.cs</DependentUpon>
-    </Compile>
     <Compile Include="TableHelper.cs" />
     <Compile Include="DAL\ExcelDataContext.cs" />
     <Compile Include="DAL\ExcelDefinition.cs" />
     <Compile Include="ExcelReader.cs" />
     <Compile Include="Logging.cs" />
-    <Compile Include="Migrations\201711250945413_initial.cs" />
-    <Compile Include="Migrations\201711250945413_initial.Designer.cs">
-      <DependentUpon>201711250945413_initial.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Migrations\201711250945413_initial.resx">
-      <DependentUpon>201711250945413_initial.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201711251041145_initial2.resx">
-      <DependentUpon>201711251041145_initial2.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

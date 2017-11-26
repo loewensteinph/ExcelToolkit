@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Data.SqlClient;
@@ -12,16 +13,21 @@ namespace toolkit.excel.data
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(DataAccess));
 
-        private List<ExcelDefinition> excelDefinitions;
+        private List<ExcelDefinition> _excelDefinitions;
 
         public DataAccess()
         {
             GetDefinitions();
         }
 
+        public DataAccess(bool testMode)
+        {
+            GetTestDefinitions();
+        }
+
         public void ProcessDefinitions()
         {
-            foreach (var definition in excelDefinitions)
+            foreach (var definition in _excelDefinitions)
             {
                 var reader = new ExcelReader(definition.FileName, definition.SheetName, definition.Range, true);
                 var result = reader.Read();
@@ -33,7 +39,7 @@ namespace toolkit.excel.data
         {
             Log.Info(string.Format("Saving {0} Row(s)", srcTable.Rows.Count));
             foreach (DataRow row in srcTable.Rows)
-                InsertDataRow(row, def);
+            InsertDataRow(row, def);
         }
 
         public static void InsertParameter(SqlCommand command,
@@ -159,7 +165,7 @@ namespace toolkit.excel.data
             return command;
         }
 
-        public static object InsertDataRow(DataRow row, ExcelDefinition def)
+        public static void InsertDataRow(DataRow row, ExcelDefinition def)
         {
             var command = CreateInsertCommand(row, def);
 
@@ -168,7 +174,17 @@ namespace toolkit.excel.data
                 command.Connection = connection;
                 command.CommandType = CommandType.Text;
                 connection.Open();
-                return command.ExecuteScalar();
+                try
+                {
+                    command.ExecuteScalar();
+                    connection.Close();
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(String.Format("Error Inserting Row {0} Table {1}", row.Table.Rows.IndexOf(row),row.Table.TableName),ex);
+                    connection.Close();
+                }
+
             }
         }
 
@@ -176,8 +192,16 @@ namespace toolkit.excel.data
         {
             using (var context = new ExcelDataContext())
             {
-                excelDefinitions = context.ExcelDefinition.Include(u => u.ColumnMappings).ToList();
-                Log.Info(string.Format("Found {0} Definition(s)", excelDefinitions.Count));
+                _excelDefinitions = context.ExcelDefinition.Include(u => u.ColumnMappings).ToList();
+                Log.Info(string.Format("Found {0} Definition(s)", _excelDefinitions.Count));
+            }
+        }
+        public void GetTestDefinitions()
+        {
+            using (var context = new ExcelUnitTestDataContext())
+            {
+                _excelDefinitions = context.ExcelDefinition.Include(u => u.ColumnMappings).ToList();
+                Log.Info(string.Format("Found {0} Definition(s)", _excelDefinitions.Count));
             }
         }
     }

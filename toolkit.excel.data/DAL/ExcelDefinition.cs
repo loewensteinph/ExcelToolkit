@@ -9,10 +9,8 @@ namespace toolkit.excel.data
         {
             ColumnMappings = new List<ColumnMapping>();
         }
-
         [Key]
         public int DefinitionId { get; set; }
-
         public string FileName { get; set; }
         public string SheetName { get; set; }
         public string Range { get; set; }
@@ -26,7 +24,6 @@ namespace toolkit.excel.data
     {
         [Key]
         public int ColumnMappingId { get; set; }
-
         public string SourceColumn { get; set; }
         public string TargetColumn { get; set; }
     }

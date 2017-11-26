@@ -6,14 +6,8 @@ namespace toolkit.excel.console
     {
         private static void Main(string[] args)
         {
-            var reader = new ExcelReader("TestWB.xlsx", "Sheet1", "A1:L100000", true);
+            var reader = new ExcelReader("TestWB.xlsx", "Sheet1", "A1:A4", true);
             var result = reader.Read();
-
-            var table = TableHelper.CreateTable("", "TestTable", result);
-
-            var da = new DataAccess();
-
-            da.ProcessDefinitions();
 
             /*
             ExcelDefinition def = new ExcelDefinition();
