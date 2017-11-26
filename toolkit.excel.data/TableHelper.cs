@@ -4,8 +4,14 @@ using System.Data.SqlClient;
 
 namespace toolkit.excel.data
 {
+    /// <summary>
+    /// Helper Class to Sync DB Tables with DataTables
+    /// </summary>  
     public static class TableHelper
     {
+        /// <summary>
+        /// Returns a Create Table Statement for a given DataTable
+        /// </summary>  
         public static string CreateTable(string connectionString, string tableName, DataTable table)
         {
             if (table != null)

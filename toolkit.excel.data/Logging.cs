@@ -11,6 +11,7 @@ using log4net.Repository.Hierarchy;
 
 namespace toolkit.excel.data
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     public static class LogFactory
     {
         public const string Log4NetConfig = "Log4Net.config";
@@ -38,7 +39,9 @@ namespace toolkit.excel.data
             return log;
         }
     }
-
+    /// <summary>
+    /// Log Database Table OR Mapping
+    /// </summary>  
     public class Log
     {
         [Key]

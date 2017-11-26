@@ -9,22 +9,24 @@ using log4net;
 
 namespace toolkit.excel.data
 {
+    /// <summary>Interacts with a given DataBase</summary>
     public class DataAccess
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(DataAccess));
 
         private List<ExcelDefinition> _excelDefinitions;
 
+        /// <summary>Default Constructor</summary>
         public DataAccess()
         {
             GetDefinitions();
         }
-
+        /// <summary>Unit Test Constructor</summary>
         public DataAccess(bool testMode)
         {
             GetTestDefinitions();
         }
-
+        /// <summary>Unit Test Constructor</summary>
         public void ProcessDefinitions()
         {
             foreach (var definition in _excelDefinitions)
@@ -34,43 +36,51 @@ namespace toolkit.excel.data
                 SaveData(result, definition);
             }
         }
-
-        public static void SaveData(DataTable srcTable, ExcelDefinition def)
+        /// <summary>Persists Data in DataTable to Sql DB</summary>
+        /// <param name="excelDefinition"></param>
+        /// <param name="srcDataTable"></param>
+        public static void SaveData(DataTable srcDataTable, ExcelDefinition excelDefinition)
         {
-            Log.Info(string.Format("Saving {0} Row(s)", srcTable.Rows.Count));
-            foreach (DataRow row in srcTable.Rows)
-            InsertDataRow(row, def);
+            Log.Info(string.Format("Saving {0} Row(s)", srcDataTable.Rows.Count));
+            foreach (DataRow row in srcDataTable.Rows)
+            InsertDataRow(row, excelDefinition);
         }
-
-        public static void InsertParameter(SqlCommand command,
+        /// <summary>Creates SqlParameter for Insert Command</summary>
+        /// <param name="sqlCommand"></param>
+        /// <param name="parameterName"></param>
+        /// <param name="sourceColumn"></param>
+        /// <param name="insertValue"></param>
+        public static void InsertParameter(SqlCommand sqlCommand,
             string parameterName,
             string sourceColumn,
-            object value)
+            object insertValue)
         {
-            var parameter = new SqlParameter(parameterName, value);
+            var parameter = new SqlParameter(parameterName, insertValue);
 
             parameter.Direction = ParameterDirection.Input;
             parameter.ParameterName = parameterName;
             parameter.SourceColumn = sourceColumn;
             parameter.SourceVersion = DataRowVersion.Current;
 
-            command.Parameters.Add(parameter);
+            sqlCommand.Parameters.Add(parameter);
         }
-
-        public static string BuildInsertSql(DataTable table, ExcelDefinition def)
+        /// <summary>Returns the Insert Statement</summary>
+        /// <param name="srcDataTable"></param>
+        /// <param name="excelDefinition"></param>
+        public static string BuildInsertSql(DataTable srcDataTable, ExcelDefinition excelDefinition)
         {
-            table.TableName = def.TargetTable;
+            srcDataTable.TableName = excelDefinition.TargetTable;
 
-            var sql = new StringBuilder("INSERT INTO " + table.TableName + " (");
+            var sql = new StringBuilder("INSERT INTO " + srcDataTable.TableName + " (");
             var values = new StringBuilder("VALUES (");
             var bFirst = true;
             var bIdentity = false;
             string identityType = null;
 
-            if (def.ColumnMappings.Count > 0)
+            if (excelDefinition.ColumnMappings.Count > 0)
             {
-                var sourceCols = string.Join(",", def.ColumnMappings.Select(x => "@" + x.SourceColumn));
-                var targetCols = string.Join(",", def.ColumnMappings.Select(x => x.TargetColumn));
+                var sourceCols = string.Join(",", excelDefinition.ColumnMappings.Select(x => "@" + x.SourceColumn));
+                var targetCols = string.Join(",", excelDefinition.ColumnMappings.Select(x => x.TargetColumn));
                 sql.Append(targetCols);
                 values.Append(sourceCols);
                 sql.Append(") ");
@@ -79,8 +89,7 @@ namespace toolkit.excel.data
                 return sql.ToString();
                 ;
             }
-
-            foreach (DataColumn column in table.Columns)
+            foreach (DataColumn column in srcDataTable.Columns)
                 if (column.AutoIncrement)
                 {
                     bIdentity = true;
@@ -130,26 +139,27 @@ namespace toolkit.excel.data
                 sql.Append(identityType);
                 sql.Append(")");
             }
-
             return sql.ToString();
             ;
         }
-
-        public static SqlCommand CreateInsertCommand(DataRow row, ExcelDefinition def)
+        /// <summary>Builds the final SqlCommand</summary>
+        /// <param name="dataRow"></param>
+        /// <param name="excelDefinition"></param>
+        public static SqlCommand CreateInsertCommand(DataRow dataRow, ExcelDefinition excelDefinition)
         {
-            var table = row.Table;
-            var sql = BuildInsertSql(table, def);
+            var table = dataRow.Table;
+            var sql = BuildInsertSql(table, excelDefinition);
             var command = new SqlCommand(sql);
             command.CommandType = CommandType.Text;
 
-            if (def.ColumnMappings.Count > 0)
+            if (excelDefinition.ColumnMappings.Count > 0)
             {
-                foreach (var mapping in def.ColumnMappings)
+                foreach (var mapping in excelDefinition.ColumnMappings)
                 {
                     var parameterName = "@" + mapping.SourceColumn;
                     InsertParameter(command, parameterName,
                         mapping.SourceColumn,
-                        row[mapping.SourceColumn]);
+                        dataRow[mapping.SourceColumn]);
                 }
                 return command;
             }
@@ -160,16 +170,18 @@ namespace toolkit.excel.data
                     var parameterName = "@" + column.ColumnName;
                     InsertParameter(command, parameterName,
                         column.ColumnName,
-                        row[column.ColumnName]);
+                        dataRow[column.ColumnName]);
                 }
             return command;
         }
-
-        public static void InsertDataRow(DataRow row, ExcelDefinition def)
+        /// <summary>Executes Insert Command for each row</summary>
+        /// <param name="dataRow"></param>
+        /// <param name="excelDefinition"></param>
+        public static void InsertDataRow(DataRow dataRow, ExcelDefinition excelDefinition)
         {
-            var command = CreateInsertCommand(row, def);
+            var command = CreateInsertCommand(dataRow, excelDefinition);
 
-            using (var connection = new SqlConnection(def.ConnectionString))
+            using (var connection = new SqlConnection(excelDefinition.ConnectionString))
             {
                 command.Connection = connection;
                 command.CommandType = CommandType.Text;
@@ -181,13 +193,12 @@ namespace toolkit.excel.data
                 }
                 catch (Exception ex)
                 {
-                    Log.Error(String.Format("Error Inserting Row {0} Table {1}", row.Table.Rows.IndexOf(row),row.Table.TableName),ex);
+                    Log.Error(String.Format("Error Inserting Row {0} Table {1}", dataRow.Table.Rows.IndexOf(dataRow),dataRow.Table.TableName),ex);
                     connection.Close();
                 }
-
             }
         }
-
+        /// <summary>Returns all defined Excel Definitions from DB Context</summary>
         public void GetDefinitions()
         {
             using (var context = new ExcelDataContext())
@@ -196,6 +207,7 @@ namespace toolkit.excel.data
                 Log.Info(string.Format("Found {0} Definition(s)", _excelDefinitions.Count));
             }
         }
+        /// <summary>Returns all defined Excel Definitions from Unittest DB Context</summary>
         public void GetTestDefinitions()
         {
             using (var context = new ExcelUnitTestDataContext())

@@ -1,0 +1,7 @@
+C:\Users\Philip\Source\Repos\ExcelToolkit\.vs\ExcelToolkit\lut\0\b\toolkit.excel.data\bin\Debug\Log4Net.config
+C:\Users\Philip\Source\Repos\ExcelToolkit\.vs\ExcelToolkit\lut\0\b\toolkit.excel.data\bin\Debug\toolkit.excel.data.dll.config
+C:\Users\Philip\Source\Repos\ExcelToolkit\.vs\ExcelToolkit\lut\0\b\toolkit.excel.data\bin\Debug\toolkit.excel.data.dll
+C:\Users\Philip\Source\Repos\ExcelToolkit\.vs\ExcelToolkit\lut\0\b\toolkit.excel.data\bin\Debug\toolkit.excel.data.pdb
+C:\Users\Philip\Source\Repos\ExcelToolkit\.vs\ExcelToolkit\lut\0\i\toolkit.excel.data\Debug\toolkit.excel.data.csproj.CoreCompileInputs.cache
+C:\Users\Philip\Source\Repos\ExcelToolkit\.vs\ExcelToolkit\lut\0\i\toolkit.excel.data\Debug\toolkit.excel.data.dll
+C:\Users\Philip\Source\Repos\ExcelToolkit\.vs\ExcelToolkit\lut\0\i\toolkit.excel.data\Debug\toolkit.excel.data.pdb

@@ -1,0 +1,16 @@
+C:\Users\Philip\Source\Repos\ExcelToolkit\.vs\ExcelToolkit\lut\0\b\toolkit.excel.test\bin\Debug\Microsoft.VisualStudio.TestPlatform.MSTest.TestAdapter.dll
+C:\Users\Philip\Source\Repos\ExcelToolkit\.vs\ExcelToolkit\lut\0\b\toolkit.excel.test\bin\Debug\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.Interface.dll
+C:\Users\Philip\Source\Repos\ExcelToolkit\.vs\ExcelToolkit\lut\0\b\toolkit.excel.test\bin\Debug\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.dll
+C:\Users\Philip\Source\Repos\ExcelToolkit\.vs\ExcelToolkit\lut\0\b\toolkit.excel.test\bin\Debug\Log4Net.config
+C:\Users\Philip\Source\Repos\ExcelToolkit\.vs\ExcelToolkit\lut\0\b\toolkit.excel.test\bin\Debug\TestWorkbooks\UT2.xlsx
+C:\Users\Philip\Source\Repos\ExcelToolkit\.vs\ExcelToolkit\lut\0\b\toolkit.excel.test\bin\Debug\TestWorkbooks\UT1.xlsx
+C:\Users\Philip\Source\Repos\ExcelToolkit\.vs\ExcelToolkit\lut\0\b\toolkit.excel.test\bin\Debug\TestWorkbooks\TestWBBig.xlsx
+C:\Users\Philip\Source\Repos\ExcelToolkit\.vs\ExcelToolkit\lut\0\b\toolkit.excel.test\bin\Debug\TestWorkbooks\TestWBDateTime.xlsx
+C:\Users\Philip\Source\Repos\ExcelToolkit\.vs\ExcelToolkit\lut\0\b\toolkit.excel.test\bin\Debug\TestWorkbooks\TestWB.xlsx
+C:\Users\Philip\Source\Repos\ExcelToolkit\.vs\ExcelToolkit\lut\0\b\toolkit.excel.test\bin\Debug\toolkit.excel.test.dll.config
+C:\Users\Philip\Source\Repos\ExcelToolkit\.vs\ExcelToolkit\lut\0\b\toolkit.excel.test\bin\Debug\toolkit.excel.test.dll
+C:\Users\Philip\Source\Repos\ExcelToolkit\.vs\ExcelToolkit\lut\0\b\toolkit.excel.test\bin\Debug\toolkit.excel.test.pdb
+C:\Users\Philip\Source\Repos\ExcelToolkit\.vs\ExcelToolkit\lut\0\i\toolkit.excel.test\Debug\toolkit.excel.test.csprojResolveAssemblyReference.cache
+C:\Users\Philip\Source\Repos\ExcelToolkit\.vs\ExcelToolkit\lut\0\i\toolkit.excel.test\Debug\toolkit.excel.test.csproj.CoreCompileInputs.cache
+C:\Users\Philip\Source\Repos\ExcelToolkit\.vs\ExcelToolkit\lut\0\i\toolkit.excel.test\Debug\toolkit.excel.test.dll
+C:\Users\Philip\Source\Repos\ExcelToolkit\.vs\ExcelToolkit\lut\0\i\toolkit.excel.test\Debug\toolkit.excel.test.pdb

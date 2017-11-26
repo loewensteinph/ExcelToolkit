@@ -3,9 +3,14 @@ using System.ComponentModel.DataAnnotations;
 
 namespace toolkit.excel.data
 {
+    /// <summary>
+    /// Represents an Excel Import as Database Table
+    /// </summary>  
     public class ExcelDefinition
     {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
         public ExcelDefinition()
+
         {
             ColumnMappings = new List<ColumnMapping>();
         }
@@ -19,7 +24,9 @@ namespace toolkit.excel.data
         public bool HasHeaderRow { get; set; }
         public List<ColumnMapping> ColumnMappings { get; set; }
     }
-
+    /// <summary>
+    /// Represents Columns of an Excel Import as Database Table
+    /// </summary>  
     public class ColumnMapping
     {
         [Key]
@@ -27,4 +34,5 @@ namespace toolkit.excel.data
         public string SourceColumn { get; set; }
         public string TargetColumn { get; set; }
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

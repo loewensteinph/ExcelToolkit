@@ -5,6 +5,7 @@ using System.Data.Entity.Migrations;
 
 namespace toolkit.excel.data
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     internal sealed class Configuration : DbMigrationsConfiguration<ExcelDataContext>
     {
         public Configuration()

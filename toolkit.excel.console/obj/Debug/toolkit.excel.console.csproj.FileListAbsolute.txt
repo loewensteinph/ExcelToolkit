@@ -29,3 +29,4 @@ C:\Users\Philip\Source\Repos\ExcelToolkit\toolkit.excel.console\bin\Debug\TestWB
 C:\Users\Philip\Source\Repos\ExcelToolkit\toolkit.excel.console\bin\Debug\System.Data.dll
 C:\Users\Philip\Source\Repos\ExcelToolkit\toolkit.excel.console\bin\Debug\EntityFramework.SqlServer.dll
 C:\Users\Philip\Source\Repos\ExcelToolkit\toolkit.excel.console\bin\Debug\EntityFramework.SqlServer.xml
+C:\Users\Philip\Source\Repos\ExcelToolkit\toolkit.excel.console\bin\Debug\toolkit.excel.data.xml

@@ -37,4 +37,5 @@ C:\Users\Philip\Source\Repos\ExcelToolkit\toolkit.excel.data\obj\Debug\toolkit.e
 C:\Users\Philip\Source\Repos\ExcelToolkit\toolkit.excel.data\obj\Debug\toolkit.excel.data.dll
 C:\Users\Philip\Source\Repos\ExcelToolkit\toolkit.excel.data\obj\Debug\toolkit.excel.data.pdb
 C:\Users\Philip\Source\Repos\ExcelToolkit\toolkit.excel.data\bin\Debug\System.Data.dll
+C:\Users\Philip\Source\Repos\ExcelToolkit\toolkit.excel.data\bin\Debug\toolkit.excel.data.xml
 C:\Users\Philip\Source\Repos\ExcelToolkit\toolkit.excel.data\obj\Debug\toolkit.excel.data.csprojResolveAssemblyReference.cache
