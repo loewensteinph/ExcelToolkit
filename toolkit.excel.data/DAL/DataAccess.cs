@@ -31,15 +31,46 @@ namespace toolkit.excel.data
         {
             foreach (var definition in _excelDefinitions)
             {
-                var reader = new ExcelReader(definition.FileName, definition.SheetName, definition.Range, true);
+                var reader = new ExcelReader(definition);
                 var result = reader.Read();
-                SaveData(result, definition);
+                if(!definition.BulkInsert)
+                {
+                    Log.Info(String.Format("Row Inserting Table {0}", definition.TargetTable));
+                    SaveRowData(result, definition);
+                }
+                else
+                {
+
+                    SaveBatchData(result, definition);
+                }
+                reader.Dispose();
             }
         }
         /// <summary>Persists Data in DataTable to Sql DB</summary>
         /// <param name="excelDefinition"></param>
         /// <param name="srcDataTable"></param>
-        public static void SaveData(DataTable srcDataTable, ExcelDefinition excelDefinition)
+        public static void SaveBatchData(DataTable srcDataTable, ExcelDefinition excelDefinition)
+        {
+            using (SqlBulkCopy bulkCopy = new SqlBulkCopy(excelDefinition.ConnectionString))
+            {
+                bulkCopy.DestinationTableName = excelDefinition.TargetTable;
+                try
+                {
+                    // Write from the source to the destination.
+                    bulkCopy.WriteToServer(srcDataTable);
+                    Log.Info(String.Format("Bulk Inserting Table {0}", excelDefinition.TargetTable));
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(String.Format("Error Bulk Inserting Table {0}", excelDefinition.TargetTable), ex);
+                }
+            }
+        }
+
+        /// <summary>Persists Data in DataTable to Sql DB</summary>
+        /// <param name="excelDefinition"></param>
+        /// <param name="srcDataTable"></param>
+        public static void SaveRowData(DataTable srcDataTable, ExcelDefinition excelDefinition)
         {
             Log.Info(string.Format("Saving {0} Row(s)", srcDataTable.Rows.Count));
             foreach (DataRow row in srcDataTable.Rows)
@@ -185,7 +216,9 @@ namespace toolkit.excel.data
             {
                 command.Connection = connection;
                 command.CommandType = CommandType.Text;
+
                 connection.Open();
+
                 try
                 {
                     command.ExecuteScalar();

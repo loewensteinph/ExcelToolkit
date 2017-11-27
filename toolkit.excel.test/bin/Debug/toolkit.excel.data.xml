@@ -16,7 +16,12 @@
         <member name="M:toolkit.excel.data.DataAccess.ProcessDefinitions">
             <summary>Unit Test Constructor</summary>
         </member>
-        <member name="M:toolkit.excel.data.DataAccess.SaveData(System.Data.DataTable,toolkit.excel.data.ExcelDefinition)">
+        <member name="M:toolkit.excel.data.DataAccess.SaveBatchData(System.Data.DataTable,toolkit.excel.data.ExcelDefinition)">
+            <summary>Persists Data in DataTable to Sql DB</summary>
+            <param name="excelDefinition"></param>
+            <param name="srcDataTable"></param>
+        </member>
+        <member name="M:toolkit.excel.data.DataAccess.SaveRowData(System.Data.DataTable,toolkit.excel.data.ExcelDefinition)">
             <summary>Persists Data in DataTable to Sql DB</summary>
             <param name="excelDefinition"></param>
             <param name="srcDataTable"></param>
@@ -74,6 +79,13 @@
             Reads a given Excel Workbook and converts it into a Datatable
             </summary>  
         </member>
+        <member name="M:toolkit.excel.data.ExcelReader.#ctor(toolkit.excel.data.ExcelDefinition)">
+            <summary>Constructor Method</summary>
+            <param name="fileName">Location of Excel File</param>
+            <param name="sheetName">Name of Worksheet</param>
+            <param name="range">Excel Range i.e. A1:C5</param>
+            <param name="hasHeaderRow">Determines existance of Header Row</param>
+        </member>
         <member name="M:toolkit.excel.data.ExcelReader.#ctor(System.String,System.String,System.String,System.Boolean)">
             <summary>Constructor Method</summary>
             <param name="fileName">Location of Excel File</param>
@@ -96,17 +108,14 @@
             <summary>Resturns a certain Worksheet from a given Excel File</summary>
             <param name="excelPackage">Excelpackage</param>
         </member>
-        <member name="M:toolkit.excel.data.ExcelReader.AddValuesToRawTable(System.Int32,System.Int32,System.Data.DataTable,OfficeOpenXml.ExcelWorksheet,System.Int32)">
-            <summary>Adds raw values from <paramref name="worksheet"/> to <paramref name="rawDataTable"/></summary>
-            <param name="worksheetStartRow">Data Range Start Row</param>
-            <param name="worksheetEndRow">Data Range End Row</param>
-            <param name="rawDataTable">Raw DataTable</param>
-            <param name="worksheet">Excel Worksheet to process</param>
-            <param name="worksheetStartCol">First Column to process</param> 
+        <member name="M:toolkit.excel.data.ExcelReader.AddValuesToRawTable">
+            <summary>Adds raw values from <see name="excelWorksheet"/> to <see name="_rawDataTable"/></summary>
         </member>
-        <member name="M:toolkit.excel.data.ExcelReader.GetDataTypes(System.Data.DataTable)">
+        <member name="M:toolkit.excel.data.ExcelReader.AddRawColumns">
             <summary>Sets DataTypes for Columns of <see name="_finalDataTable"/></summary>
-            <param name="rawDataTable">Raw DataTable</param>
+        </member>
+        <member name="M:toolkit.excel.data.ExcelReader.AddTypedColumns">
+            <summary>Sets DataTypes for Columns of <see name="_finalDataTable"/></summary>
         </member>
         <member name="M:toolkit.excel.data.ExcelReader.IsGuid(System.String)">
             <summary>Identifies if a given String <paramref name="stringToParse"/> is of Type <see cref="T:System.Guid"/>></summary>

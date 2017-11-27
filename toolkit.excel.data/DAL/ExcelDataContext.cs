@@ -54,6 +54,8 @@ namespace toolkit.excel.data
                 HasHeaderRow = true,
                 Range = "A1:D5",
                 TargetTable = "Test.UT1",
+                ValidateDataTypes = true,
+                BulkInsert = false,
                 ConnectionString = "Data Source=.;Initial Catalog=ExcelDBUNitTest;Integrated Security=true"
             };
 
@@ -75,6 +77,8 @@ namespace toolkit.excel.data
                 HasHeaderRow = true,
                 Range = "A1:E5",
                 TargetTable = "Test.UT2",
+                ValidateDataTypes = true,
+                BulkInsert = true,
                 ConnectionString = "Data Source=.;Initial Catalog=ExcelDBUNitTest;Integrated Security=true"
             };
 

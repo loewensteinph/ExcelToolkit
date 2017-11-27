@@ -22,6 +22,8 @@ namespace toolkit.excel.data
         public string TargetTable { get; set; }
         public string ConnectionString { get; set; }
         public bool HasHeaderRow { get; set; }
+        public bool BulkInsert { get; set; }
+        public bool ValidateDataTypes { get; set; }
         public List<ColumnMapping> ColumnMappings { get; set; }
     }
     /// <summary>

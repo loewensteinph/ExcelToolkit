@@ -6,21 +6,53 @@ using System.IO;
 using System.Linq;
 using log4net;
 using OfficeOpenXml;
+using System.Threading;
 
 namespace toolkit.excel.data
 {
     /// <summary>
     /// Reads a given Excel Workbook and converts it into a Datatable
     /// </summary>  
-    public class ExcelReader
+    public class ExcelReader : IDisposable
     {
         private ILog Log = LogManager.GetLogger(typeof(ExcelReader));
 
         private readonly CultureInfo[] _cultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
         private readonly HashSet<string> _patterns;
-        private ExcelDefinition Definition;
-        private readonly DataTable rawDataTable = new DataTable();
+        public ExcelDefinition Exceldefinition;
+        private readonly DataTable _rawDataTable = new DataTable();
         private readonly DataTable _finalDataTable = new DataTable();
+
+        private ExcelWorksheet excelWorksheet;
+
+        private Int32 worksheetStartColumn;
+        private Int32 worksheetEndColumn;
+        private Int32 worksheetStartRow;
+        private Int32 worksheetEndRow;
+
+        /// <summary>Constructor Method</summary>
+        /// <param name="fileName">Location of Excel File</param>
+        /// <param name="sheetName">Name of Worksheet</param>
+        /// <param name="range">Excel Range i.e. A1:C5</param>
+        /// <param name="hasHeaderRow">Determines existance of Header Row</param>
+        public ExcelReader(ExcelDefinition definition)
+        {
+            Exceldefinition = definition;
+            Log = LogManager.GetLogger(typeof(ExcelReader));
+            Log.Info(string.Format("Starting Import: {0}", Exceldefinition.FileName));
+
+            _patterns = new HashSet<string>();
+
+            foreach (var culture in _cultures.Where(c => c.Name == "en-US" || c.Name == "de-DE"))
+            {
+                _patterns.UnionWith(culture.DateTimeFormat.GetAllDateTimePatterns('d'));
+                _patterns.UnionWith(culture.DateTimeFormat.GetAllDateTimePatterns('D'));
+                _patterns.UnionWith(culture.DateTimeFormat.GetAllDateTimePatterns('f'));
+                _patterns.UnionWith(culture.DateTimeFormat.GetAllDateTimePatterns('U'));
+                _patterns.UnionWith(culture.DateTimeFormat.GetAllDateTimePatterns('g'));
+                _patterns.UnionWith(culture.DateTimeFormat.GetAllDateTimePatterns('G'));
+            }
+        }
 
         /// <summary>Constructor Method</summary>
         /// <param name="fileName">Location of Excel File</param>
@@ -32,7 +64,7 @@ namespace toolkit.excel.data
             Log = LogManager.GetLogger(typeof(ExcelReader));
             Log.Info(string.Format("Starting Import: {0}", fileName));
 
-            Definition = new ExcelDefinition
+            Exceldefinition = new ExcelDefinition
             {
                 Range = range,
                 SheetName = sheetName,
@@ -42,7 +74,7 @@ namespace toolkit.excel.data
 
             _patterns = new HashSet<string>();
 
-            foreach (var culture in _cultures.Where(c=>c.Name == "en-US" || c.Name == "de-DE"))
+            foreach (var culture in _cultures.Where(c => c.Name == "en-US" || c.Name == "de-DE"))
             {
                 _patterns.UnionWith(culture.DateTimeFormat.GetAllDateTimePatterns('d'));
                 _patterns.UnionWith(culture.DateTimeFormat.GetAllDateTimePatterns('D'));
@@ -76,13 +108,13 @@ namespace toolkit.excel.data
         {
             try
             {
-                var wsCol = workSheet.Cells[Definition.Range];
+                var wsCol = workSheet.Cells[Exceldefinition.Range];
             }
             catch (Exception ex)
             {
                 Log.Error(
-                    string.Format("Error accessing Range: '{0}' in Workbook: '{1}' Sheet: '{2}'", Definition.Range,
-                        Definition.FileName, workSheet.Name), ex);
+                    string.Format("Error accessing Range: '{0}' in Workbook: '{1}' Sheet: '{2}'", Exceldefinition.Range,
+                        Exceldefinition.FileName, workSheet.Name), ex);
                 return false;
             }
             return true;
@@ -90,93 +122,98 @@ namespace toolkit.excel.data
         /// <summary>Creates a DataTable based on a given <see cref="ExcelDefinition"/></summary>
         public DataTable Read()
         {
-            if (!CheckFilePath(Definition.FileName))
+            if (!CheckFilePath(Exceldefinition.FileName))
                 return null;
 
             using (var pck = new ExcelPackage())
             {
-                ExcelWorksheet ws = GetExcelWorksheet(pck);
+                excelWorksheet = GetExcelWorksheet(pck);
 
-                if (ws == null)
+                if (excelWorksheet == null)
                     return null;
 
-                if (!CheckDefinedRange(ws))
+                if (!CheckDefinedRange(excelWorksheet))
                     return null;
-                ExcelRange wsCol = ws.Cells[Definition.Range];
+                ExcelRange wsCol = excelWorksheet.Cells[Exceldefinition.Range];
 
-                Int32 startCol = wsCol.Start.Column;
-                Int32 endCol = wsCol.End.Column;
-                Int32 startRow = wsCol.Start.Row;
-                Int32 endRow = wsCol.End.Row;
+                worksheetStartColumn = wsCol.Start.Column;
+                worksheetEndColumn = wsCol.End.Column;
+                worksheetStartRow = wsCol.Start.Row;
+                worksheetEndRow = wsCol.End.Row;
 
-                if (Definition.HasHeaderRow)
+                if (Exceldefinition.HasHeaderRow)
                 {
-                    startRow = startRow + 1;
+                    worksheetStartRow = worksheetStartRow + 1;
                 }
 
-                if (Definition.HasHeaderRow)
-                    foreach (var firstRowCell in ws.Cells[startRow - 1, startCol, startRow - 1, endCol])
+                if (Exceldefinition.HasHeaderRow)
+                    foreach (var firstRowCell in excelWorksheet.Cells[worksheetStartRow - 1, worksheetStartColumn, worksheetStartRow - 1, worksheetEndColumn])
                     {
                         DataColumn col = new DataColumn(firstRowCell.Text);
-                        rawDataTable.Columns.Add(col);
+                        _rawDataTable.Columns.Add(col);
                     }
                 else
-                    foreach (var firstRowCell in ws.Cells[startRow, startCol, startRow, endCol])
+                    foreach (var firstRowCell in excelWorksheet.Cells[worksheetStartRow, worksheetStartColumn, worksheetStartRow, worksheetEndColumn])
                     {
                         DataColumn col = new DataColumn("Col" + firstRowCell.Start.Column);
-                        rawDataTable.Columns.Add(col);
+                        _rawDataTable.Columns.Add(col);
                     }
-                AddValuesToRawTable(startRow, endRow, rawDataTable, ws, startCol);
-                GetDataTypes(rawDataTable);
 
-                foreach (DataRow dr in rawDataTable.Rows)
+                AddValuesToRawTable();
+
+                if (Exceldefinition.ValidateDataTypes)
+                {
+                    AddTypedColumns();
+                }
+                else
+                {
+                    AddRawColumns();
+                }
+
+                foreach (DataRow dr in _rawDataTable.Rows)
                     _finalDataTable.ImportRow(dr);
                 return _finalDataTable;
             }
         }
+
         /// <summary>Resturns a certain Worksheet from a given Excel File</summary>
         /// <param name="excelPackage">Excelpackage</param>
         private ExcelWorksheet GetExcelWorksheet(ExcelPackage excelPackage)
         {
             ExcelWorksheet ws;
-            using (FileStream stream = File.OpenRead(Definition.FileName))
+            using (FileStream stream = File.OpenRead(Exceldefinition.FileName))
             {
                 excelPackage.Load(stream);
             }
             try
             {
-                ws = excelPackage.Workbook.Worksheets[Definition.SheetName];
+                ws = excelPackage.Workbook.Worksheets[Exceldefinition.SheetName];
             }
             catch (Exception ex)
             {
-                Log.Error("Worksheet not found!",ex);
+                Log.Error("Worksheet not found!", ex);
                 return null;
             }
 
             return ws;
         }
-        /// <summary>Adds raw values from <paramref name="worksheet"/> to <paramref name="rawDataTable"/></summary>
-        /// <param name="worksheetStartRow">Data Range Start Row</param>
-        /// <param name="worksheetEndRow">Data Range End Row</param>
-        /// <param name="rawDataTable">Raw DataTable</param>
-        /// <param name="worksheet">Excel Worksheet to process</param>
-        /// <param name="worksheetStartCol">First Column to process</param> 
-        private static void AddValuesToRawTable(Int32 worksheetStartRow, Int32 worksheetEndRow, DataTable rawDataTable, ExcelWorksheet worksheet, Int32 worksheetStartCol)
+        /// <summary>Adds raw values from <see name="excelWorksheet"/> to <see name="_rawDataTable"/></summary>
+        public void AddValuesToRawTable()
         {
             for (Int32 rowNum = worksheetStartRow; rowNum <= worksheetEndRow; rowNum++)
             {
-                DataRow row = rawDataTable.NewRow();
+                DataRow row = _rawDataTable.NewRow();
 
                 Int32 endColumn;
 
-                if (rawDataTable.Columns.Count == 1)
+                if (_rawDataTable.Columns.Count == 1)
                     endColumn = 1;
                 else
                 {
-                    endColumn = rawDataTable.Columns.Count + 1;
+                    endColumn = _rawDataTable.Columns.Count + 1;
                 }
 
-                ExcelRange wsRow = worksheet.Cells[rowNum, worksheetStartCol, rowNum, endColumn];
+                ExcelRange wsRow = excelWorksheet.Cells[rowNum, worksheetStartColumn, rowNum, endColumn];
 
                 Int32 cellsWithoutContent = 0;
                 foreach (ExcelRangeBase cell in wsRow)
@@ -184,34 +221,48 @@ namespace toolkit.excel.data
                     if (String.IsNullOrEmpty(cell.Text) || String.IsNullOrWhiteSpace(cell.Text))
                         cellsWithoutContent++;
                 }
-                if (rawDataTable.Columns.Count - cellsWithoutContent > 0)
+                if (_rawDataTable.Columns.Count - cellsWithoutContent > 0)
                 {
                     foreach (var cell in wsRow)
                     {
-                        DataColumn dataColumn = rawDataTable.Columns[cell.Start.Column - 1];
+                        DataColumn dataColumn = _rawDataTable.Columns[cell.Start.Column - 1];
                         row[dataColumn.ColumnName] = cell.Value;
                         if (cell.Text.Equals("NULL"))
                             row[cell.Start.Column - 1] = DBNull.Value;
                         else
                             row[cell.Start.Column - 1] = cell.Text;
                     }
-                    rawDataTable.Rows.Add(row);
+                    _rawDataTable.Rows.Add(row);
                 }
             }
-            rawDataTable.Rows.Cast<DataRow>().ToList().FindAll(row => String.IsNullOrEmpty(String.Join("", row.ItemArray))).ForEach(Row =>
-                { rawDataTable.Rows.Remove(Row); });
+            _rawDataTable.Rows.Cast<DataRow>().ToList().FindAll(row => String.IsNullOrEmpty(String.Join("", row.ItemArray))).ForEach(Row =>
+                { _rawDataTable.Rows.Remove(Row); });
         }
         /// <summary>Sets DataTypes for Columns of <see name="_finalDataTable"/></summary>
-        /// <param name="rawDataTable">Raw DataTable</param>
-        private void GetDataTypes(DataTable rawDataTable)
+        private void AddRawColumns()
         {
-            foreach (DataColumn col in rawDataTable.Columns)
+            foreach (DataColumn col in _rawDataTable.Columns)
+            {
+                DataColumn finalColumn = new DataColumn
+                {
+                    DataType = typeof(string),
+                    ColumnName = col.ColumnName
+                };
+                if (!_finalDataTable.Columns.Contains(finalColumn.ColumnName))
+                    _finalDataTable.Columns.Add(finalColumn);
+            }
+        }
+        /// <summary>Sets DataTypes for Columns of <see name="_finalDataTable"/></summary>
+        private void AddTypedColumns()
+        {
+            foreach (DataColumn col in _rawDataTable.Columns)
             {
                 object currentDataType = typeof(string);
                 bool first = true;
 
-                foreach (DataRow row in rawDataTable.Rows)
+                foreach (DataRow row in _rawDataTable.Rows)
                 {
+
                     if (!String.IsNullOrEmpty(row.ToString()))
                     {
                         if (currentDataType != ParseString(row[col.ColumnName].ToString()) && !first)
@@ -225,7 +276,7 @@ namespace toolkit.excel.data
                         currentDataType = ParseString(row[col.ColumnName].ToString());
                     }
                     first = false;
-                    Log.Info(String.Format("Column {0} Row {1} DataType {2} identified Value {3}", col.ColumnName,row.Table.Rows.IndexOf(row), currentDataType, row[col.ColumnName].ToString()));
+                    Log.Debug(String.Format("Column {0} Row {1} DataType {2} identified Value {3}", col.ColumnName, row.Table.Rows.IndexOf(row), currentDataType, row[col.ColumnName].ToString()));
                 }
                 DataColumn finalColumn = new DataColumn
                 {
@@ -253,17 +304,24 @@ namespace toolkit.excel.data
             bool boolValue;
             DateTime datetimeValue;
 
-            CultureInfo cultureinfo = new CultureInfo("de-DE");
+            CultureInfo cultureinfoDe = new CultureInfo("de-DE");
             CultureInfo cultureinfoUs = new CultureInfo("en-US");
 
             if (long.TryParse(stringToParse, out intValue))
                 return intValue.GetType();
-            if (DateTime.TryParseExact(stringToParse, _patterns.ToArray(), cultureinfo,
-                DateTimeStyles.None, out datetimeValue))
-                return datetimeValue.GetType();
-            if (DateTime.TryParseExact(stringToParse, _patterns.ToArray(), cultureinfoUs,
-                DateTimeStyles.None, out datetimeValue))
-                return datetimeValue.GetType();
+
+            if (stringToParse.Contains("-") || stringToParse.Contains("/"))
+            {
+                if (DateTime.TryParseExact(stringToParse, _patterns.ToArray(), cultureinfoUs,
+                    DateTimeStyles.None, out datetimeValue))
+                    return datetimeValue.GetType();
+            }
+            if (stringToParse.Contains("."))
+            {
+                if (DateTime.TryParseExact(stringToParse, _patterns.ToArray(), cultureinfoDe,
+                    DateTimeStyles.None, out datetimeValue))
+                    return datetimeValue.GetType();
+            }
             if (decimal.TryParse(stringToParse, out decimalValue))
                 return decimalValue.GetType();
             if (DateTime.TryParse(stringToParse, out datetimeValue))
@@ -274,5 +332,27 @@ namespace toolkit.excel.data
                 return boolValue.GetType();
             return typeof(string);
         }
+
+        #region IDisposable Support
+        private bool disposedValue = false; // To detect redundant calls
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    this._finalDataTable.Dispose();
+                    this._rawDataTable.Dispose();
+                }
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+        #endregion
     }
 }

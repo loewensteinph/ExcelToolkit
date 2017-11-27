@@ -1,0 +1,127 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>toolkit.excel.data</name>
+    </assembly>
+    <members>
+        <member name="T:toolkit.excel.data.DataAccess">
+            <summary>Interacts with a given DataBase</summary>
+        </member>
+        <member name="M:toolkit.excel.data.DataAccess.#ctor">
+            <summary>Default Constructor</summary>
+        </member>
+        <member name="M:toolkit.excel.data.DataAccess.#ctor(System.Boolean)">
+            <summary>Unit Test Constructor</summary>
+        </member>
+        <member name="M:toolkit.excel.data.DataAccess.ProcessDefinitions">
+            <summary>Unit Test Constructor</summary>
+        </member>
+        <member name="M:toolkit.excel.data.DataAccess.SaveBatchData(System.Data.DataTable,toolkit.excel.data.ExcelDefinition)">
+            <summary>Persists Data in DataTable to Sql DB</summary>
+            <param name="excelDefinition"></param>
+            <param name="srcDataTable"></param>
+        </member>
+        <member name="M:toolkit.excel.data.DataAccess.SaveRowData(System.Data.DataTable,toolkit.excel.data.ExcelDefinition)">
+            <summary>Persists Data in DataTable to Sql DB</summary>
+            <param name="excelDefinition"></param>
+            <param name="srcDataTable"></param>
+        </member>
+        <member name="M:toolkit.excel.data.DataAccess.InsertParameter(System.Data.SqlClient.SqlCommand,System.String,System.String,System.Object)">
+            <summary>Creates SqlParameter for Insert Command</summary>
+            <param name="sqlCommand"></param>
+            <param name="parameterName"></param>
+            <param name="sourceColumn"></param>
+            <param name="insertValue"></param>
+        </member>
+        <member name="M:toolkit.excel.data.DataAccess.BuildInsertSql(System.Data.DataTable,toolkit.excel.data.ExcelDefinition)">
+            <summary>Returns the Insert Statement</summary>
+            <param name="srcDataTable"></param>
+            <param name="excelDefinition"></param>
+        </member>
+        <member name="M:toolkit.excel.data.DataAccess.CreateInsertCommand(System.Data.DataRow,toolkit.excel.data.ExcelDefinition)">
+            <summary>Builds the final SqlCommand</summary>
+            <param name="dataRow"></param>
+            <param name="excelDefinition"></param>
+        </member>
+        <member name="M:toolkit.excel.data.DataAccess.InsertDataRow(System.Data.DataRow,toolkit.excel.data.ExcelDefinition)">
+            <summary>Executes Insert Command for each row</summary>
+            <param name="dataRow"></param>
+            <param name="excelDefinition"></param>
+        </member>
+        <member name="M:toolkit.excel.data.DataAccess.GetDefinitions">
+            <summary>Returns all defined Excel Definitions from DB Context</summary>
+        </member>
+        <member name="M:toolkit.excel.data.DataAccess.GetTestDefinitions">
+            <summary>Returns all defined Excel Definitions from Unittest DB Context</summary>
+        </member>
+        <member name="T:toolkit.excel.data.TableHelper">
+            <summary>
+            Helper Class to Sync DB Tables with DataTables
+            </summary>  
+        </member>
+        <member name="M:toolkit.excel.data.TableHelper.CreateTable(System.String,System.String,System.Data.DataTable)">
+            <summary>
+            Returns a Create Table Statement for a given DataTable
+            </summary>  
+        </member>
+        <member name="T:toolkit.excel.data.ExcelDefinition">
+            <summary>
+            Represents an Excel Import as Database Table
+            </summary>  
+        </member>
+        <member name="T:toolkit.excel.data.ColumnMapping">
+            <summary>
+            Represents Columns of an Excel Import as Database Table
+            </summary>  
+        </member>
+        <member name="T:toolkit.excel.data.ExcelReader">
+            <summary>
+            Reads a given Excel Workbook and converts it into a Datatable
+            </summary>  
+        </member>
+        <member name="M:toolkit.excel.data.ExcelReader.#ctor(System.String,System.String,System.String,System.Boolean)">
+            <summary>Constructor Method</summary>
+            <param name="fileName">Location of Excel File</param>
+            <param name="sheetName">Name of Worksheet</param>
+            <param name="range">Excel Range i.e. A1:C5</param>
+            <param name="hasHeaderRow">Determines existance of Header Row</param>
+        </member>
+        <member name="M:toolkit.excel.data.ExcelReader.CheckFilePath(System.String)">
+            <summary>Checks existance of an Excel File</summary>
+            <param name="fileName">Location of Excel File</param>
+        </member>
+        <member name="M:toolkit.excel.data.ExcelReader.CheckDefinedRange(OfficeOpenXml.ExcelWorksheet)">
+            <summary>Checks existance of a defined range</summary>
+            <param name="workSheet">Excel Worksheet to check</param>
+        </member>
+        <member name="M:toolkit.excel.data.ExcelReader.Read">
+            <summary>Creates a DataTable based on a given <see cref="T:toolkit.excel.data.ExcelDefinition"/></summary>
+        </member>
+        <member name="M:toolkit.excel.data.ExcelReader.GetExcelWorksheet(OfficeOpenXml.ExcelPackage)">
+            <summary>Resturns a certain Worksheet from a given Excel File</summary>
+            <param name="excelPackage">Excelpackage</param>
+        </member>
+        <member name="M:toolkit.excel.data.ExcelReader.AddValuesToRawTable">
+            <summary>Adds raw values from <see name="excelWorksheet"/> to <see name="_rawDataTable"/></summary>
+        </member>
+        <member name="M:toolkit.excel.data.ExcelReader.AddRawColumns">
+            <summary>Sets DataTypes for Columns of <see name="_finalDataTable"/></summary>
+        </member>
+        <member name="M:toolkit.excel.data.ExcelReader.AddTypedColumns">
+            <summary>Sets DataTypes for Columns of <see name="_finalDataTable"/></summary>
+        </member>
+        <member name="M:toolkit.excel.data.ExcelReader.IsGuid(System.String)">
+            <summary>Identifies if a given String <paramref name="stringToParse"/> is of Type <see cref="T:System.Guid"/>></summary>
+            <param name="stringToParse">String to parse</param>
+        </member>
+        <member name="M:toolkit.excel.data.ExcelReader.ParseString(System.String)">
+            <summary>Identifies the DataType of a given String <paramref name="stringToParse"/></summary>
+            <param name="stringToParse">String to parse</param>
+        </member>
+        <member name="T:toolkit.excel.data.Log">
+            <summary>
+            Log Database Table OR Mapping
+            </summary>  
+        </member>
+    </members>
+</doc>

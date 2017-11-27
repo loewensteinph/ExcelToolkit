@@ -8,7 +8,7 @@ namespace toolkit.excel.console
         {
             var reader = new ExcelReader("TestWB.xlsx", "Sheet1", "A1:A4", true);
             var result = reader.Read();
-
+            reader.Dispose();
             /*
             ExcelDefinition def = new ExcelDefinition();
             def.FileName = "TestWB.xlsx";

@@ -46,12 +46,11 @@ namespace toolkit.excel.test
             _result = _reader.Read();
             Assert.AreEqual(1, _result.Rows.Count);
         }
-        /*
         [TestMethod]
-        [Ignore]
         public void BigSheet()
         {
             _reader = new ExcelReader(@"TestWorkbooks\TestWBBig.xlsx", "Sheet1", "A1:L5500", true);
+            _reader.Exceldefinition.ValidateDataTypes = false;
             _result = _reader.Read();
             Assert.AreEqual(5499, _result.Rows.Count);
         }
@@ -60,9 +59,9 @@ namespace toolkit.excel.test
         public void BigSheet2()
         {
             _reader = new ExcelReader(@"TestWorkbooks\TestWBBig.xlsx", "Sheet1", "A1:L40000", true);
-            _result = _reader.Read();
+            _reader.Exceldefinition.ValidateDataTypes = false;
+            _result = _reader.Read();        
             Assert.AreEqual(39999, _result.Rows.Count);
         }
-        */
     }
 }

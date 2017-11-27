@@ -14,6 +14,7 @@ namespace toolkit.excel.test
         public TestWB()
         {
             reader = new ExcelReader(@"TestWorkbooks\TestWB.xlsx", "Sheet1", "A1:L500", true);
+            reader.Exceldefinition.ValidateDataTypes = true;
             result = reader.Read();
         }
 
