@@ -32,6 +32,8 @@
         </member>
         <member name="M:toolkit.excel.data.DataAccess.WriteBackErrors(System.Collections.Generic.SortedDictionary{System.Int32,System.String},toolkit.excel.data.ExcelDefinition)">
             <summary>Adds Error Comments to Sheet</summary>
+            <param name="definition">Excel Definition</param>
+            <param name="errorList">List with Error Rows</param>
         </member>
         <member name="M:toolkit.excel.data.DataAccess.InsertParameter(System.Data.SqlClient.SqlCommand,System.String,System.String,System.Object)">
             <summary>Creates SqlParameter for Insert Command</summary>

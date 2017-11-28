@@ -113,18 +113,21 @@ namespace toolkit.excel.data
             }
             rowCount = srcDataTable.Rows.Count;
 
+            SortedDictionary<int, string> errorList = new SortedDictionary<int, string>();
+
             if (srcDataTable.HasErrors)
-            {
-                SortedDictionary<int, string> errorList = new SortedDictionary<int, string>();
+            {               
                 DataRow[] errorRows = srcDataTable.GetErrors();
                 foreach (var row in errorRows)
                 {
                     errorList.Add(srcDataTable.Rows.IndexOf(row), row.RowError);
                 }
-                WriteBackErrors(errorList, excelDefinition);
             }
+            WriteBackErrors(errorList, excelDefinition);
         }
         /// <summary>Adds Error Comments to Sheet</summary>
+        /// <param name="definition">Excel Definition</param>
+        /// <param name="errorList">List with Error Rows</param>
         public void WriteBackErrors(SortedDictionary<int, string> errorList,ExcelDefinition definition)
         {
             ExcelWorksheet excelWorksheet;

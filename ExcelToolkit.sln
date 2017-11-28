@@ -9,8 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "toolkit.excel.console", "to
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "toolkit.excel.test", "toolkit.excel.test\toolkit.excel.test.csproj", "{715126E2-16A4-4124-A83E-F9EEC45C4C65}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "toolkit.excel.web", "toolkit.excel.web\toolkit.excel.web.csproj", "{7728EEA6-A6CF-4A0D-8E44-19CD1B437BE8}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,10 +27,6 @@ Global
 		{715126E2-16A4-4124-A83E-F9EEC45C4C65}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{715126E2-16A4-4124-A83E-F9EEC45C4C65}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{715126E2-16A4-4124-A83E-F9EEC45C4C65}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7728EEA6-A6CF-4A0D-8E44-19CD1B437BE8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7728EEA6-A6CF-4A0D-8E44-19CD1B437BE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7728EEA6-A6CF-4A0D-8E44-19CD1B437BE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7728EEA6-A6CF-4A0D-8E44-19CD1B437BE8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
