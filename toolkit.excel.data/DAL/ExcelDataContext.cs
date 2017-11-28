@@ -53,9 +53,13 @@ namespace toolkit.excel.data
                 SheetName = "Sheet1",
                 HasHeaderRow = true,
                 Range = "A1:D5",
+                RangeHeightAuto = false,
+                RangeWidthAuto = false,
                 TargetTable = "Test.UT1",
                 ValidateDataTypes = true,
                 BulkInsert = false,
+                DeleteBeforeImport = true,
+                IsActive = false,
                 ConnectionString = "Data Source=.;Initial Catalog=ExcelDBUNitTest;Integrated Security=true"
             };
 
@@ -72,13 +76,43 @@ namespace toolkit.excel.data
 
             def = new ExcelDefinition
             {
+                FileName = @"TestWorkbooks\UT1.xlsx",
+                SheetName = "Sheet2",
+                HasHeaderRow = true,
+                Range = "M14:P18",
+                RangeHeightAuto = false,
+                RangeWidthAuto = false,
+                TargetTable = "Test.UT1a",
+                ValidateDataTypes = false,
+                BulkInsert = false,
+                DeleteBeforeImport = true,
+                IsActive = true,
+                ConnectionString = "Data Source=.;Initial Catalog=ExcelDBUNitTest;Integrated Security=true"
+            };
+
+            map = new List<ColumnMapping>
+            {
+                new ColumnMapping() {SourceColumn = "StringTest", TargetColumn = "StringTest"},
+                new ColumnMapping() {SourceColumn = "DecimalTest", TargetColumn = "DecimalTest"},
+                new ColumnMapping() {SourceColumn = "IntTest", TargetColumn = "IntTest"},
+                new ColumnMapping() {SourceColumn = "GuidTest", TargetColumn = "GuidTest"}
+            };
+
+            def.ColumnMappings.AddRange(map);
+            context.Entry(def).State = EntityState.Added;
+
+            def = new ExcelDefinition
+            {
                 FileName = @"TestWorkbooks\UT2.xlsx",
                 SheetName = "Sheet1",
                 HasHeaderRow = true,
                 Range = "A1:E5",
+                RangeHeightAuto = false,
+                RangeWidthAuto = false,
                 TargetTable = "Test.UT2",
                 ValidateDataTypes = true,
                 BulkInsert = true,
+                IsActive = false,
                 ConnectionString = "Data Source=.;Initial Catalog=ExcelDBUNitTest;Integrated Security=true"
             };
 
@@ -89,6 +123,34 @@ namespace toolkit.excel.data
                 new ColumnMapping() {SourceColumn = "IntTest", TargetColumn = "IntTest1"},
                 new ColumnMapping() {SourceColumn = "GuidTest", TargetColumn = "GuidTest1"},
                 new ColumnMapping() {SourceColumn = "DateTest", TargetColumn = "DateTest"}    
+            };
+            def.ColumnMappings.AddRange(map);
+            context.Entry(def).State = EntityState.Added;
+
+            context.SaveChanges();
+
+            def = new ExcelDefinition
+            {
+                FileName = @"TestWorkbooks\UT3.xlsx",
+                SheetName = "Sheet1",
+                HasHeaderRow = true,
+                Range = "A1:A1",
+                RangeHeightAuto = true,
+                RangeWidthAuto = true,
+                TargetTable = "Test.UT3",
+                ValidateDataTypes = true,
+                BulkInsert = true,
+                IsActive = false,
+                ConnectionString = "Data Source=.;Initial Catalog=ExcelDBUNitTest;Integrated Security=true"
+            };
+
+            map = new List<ColumnMapping>
+            {
+                new ColumnMapping() {SourceColumn = "StringTest", TargetColumn = "StringTest1"},
+                new ColumnMapping() {SourceColumn = "DecimalTest", TargetColumn = "DecimalTest1"},
+                new ColumnMapping() {SourceColumn = "IntTest", TargetColumn = "IntTest1"},
+                new ColumnMapping() {SourceColumn = "GuidTest", TargetColumn = "GuidTest1"},
+                new ColumnMapping() {SourceColumn = "DateTest", TargetColumn = "DateTest"}
             };
             def.ColumnMappings.AddRange(map);
             context.Entry(def).State = EntityState.Added;

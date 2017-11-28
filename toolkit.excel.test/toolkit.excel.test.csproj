@@ -72,6 +72,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
+    <None Include="TestWorkbooks\UT3.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="TestWorkbooks\UT2.xlsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

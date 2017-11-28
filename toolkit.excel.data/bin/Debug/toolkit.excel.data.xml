@@ -16,6 +16,10 @@
         <member name="M:toolkit.excel.data.DataAccess.ProcessDefinitions">
             <summary>Unit Test Constructor</summary>
         </member>
+        <member name="M:toolkit.excel.data.DataAccess.ResetTable(toolkit.excel.data.ExcelDefinition)">
+            <summary>Deletes existing Rows from Target Table</summary>
+            <param name="excelDefinition"></param>
+        </member>
         <member name="M:toolkit.excel.data.DataAccess.SaveBatchData(System.Data.DataTable,toolkit.excel.data.ExcelDefinition)">
             <summary>Persists Data in DataTable to Sql DB</summary>
             <param name="excelDefinition"></param>
@@ -25,6 +29,9 @@
             <summary>Persists Data in DataTable to Sql DB</summary>
             <param name="excelDefinition"></param>
             <param name="srcDataTable"></param>
+        </member>
+        <member name="M:toolkit.excel.data.DataAccess.WriteBackErrors(System.Collections.Generic.SortedDictionary{System.Int32,System.String},toolkit.excel.data.ExcelDefinition)">
+            <summary>Adds Error Comments to Sheet</summary>
         </member>
         <member name="M:toolkit.excel.data.DataAccess.InsertParameter(System.Data.SqlClient.SqlCommand,System.String,System.String,System.Object)">
             <summary>Creates SqlParameter for Insert Command</summary>
@@ -54,6 +61,17 @@
         <member name="M:toolkit.excel.data.DataAccess.GetTestDefinitions">
             <summary>Returns all defined Excel Definitions from Unittest DB Context</summary>
         </member>
+        <member name="M:toolkit.excel.data.DataAccess.SaveTestImport(toolkit.excel.data.ExcelDefinition)">
+            <summary>Returns all defined Excel Definitions from Unittest DB Context</summary>
+        </member>
+        <member name="M:toolkit.excel.data.DataAccess.SaveImport(toolkit.excel.data.ExcelDefinition)">
+            <summary>Returns all defined Excel Definitions from Unittest DB Context</summary>
+        </member>
+        <member name="T:toolkit.excel.data.ExcelImport">
+            <summary>
+            Represents an Excel Import as Database Table
+            </summary>  
+        </member>
         <member name="T:toolkit.excel.data.TableHelper">
             <summary>
             Helper Class to Sync DB Tables with DataTables
@@ -81,10 +99,7 @@
         </member>
         <member name="M:toolkit.excel.data.ExcelReader.#ctor(toolkit.excel.data.ExcelDefinition)">
             <summary>Constructor Method</summary>
-            <param name="fileName">Location of Excel File</param>
-            <param name="sheetName">Name of Worksheet</param>
-            <param name="range">Excel Range i.e. A1:C5</param>
-            <param name="hasHeaderRow">Determines existance of Header Row</param>
+            <param name="definition">Excel Definition</param>
         </member>
         <member name="M:toolkit.excel.data.ExcelReader.#ctor(System.String,System.String,System.String,System.Boolean)">
             <summary>Constructor Method</summary>

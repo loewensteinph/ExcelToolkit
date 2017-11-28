@@ -6,6 +6,8 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using log4net;
+using OfficeOpenXml;
+using System.IO;
 
 namespace toolkit.excel.data
 {
@@ -13,9 +15,9 @@ namespace toolkit.excel.data
     public class DataAccess
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(DataAccess));
-
         private List<ExcelDefinition> _excelDefinitions;
-
+        private bool _testMode;
+        private int rowCount;
         /// <summary>Default Constructor</summary>
         public DataAccess()
         {
@@ -24,6 +26,7 @@ namespace toolkit.excel.data
         /// <summary>Unit Test Constructor</summary>
         public DataAccess(bool testMode)
         {
+            _testMode = testMode;
             GetTestDefinitions();
         }
         /// <summary>Unit Test Constructor</summary>
@@ -33,6 +36,12 @@ namespace toolkit.excel.data
             {
                 var reader = new ExcelReader(definition);
                 var result = reader.Read();
+
+                if(definition.DeleteBeforeImport)
+                {
+                    ResetTable(definition);
+                }
+                
                 if(!definition.BulkInsert)
                 {
                     Log.Info(String.Format("Row Inserting Table {0}", definition.TargetTable));
@@ -40,17 +49,43 @@ namespace toolkit.excel.data
                 }
                 else
                 {
-
                     SaveBatchData(result, definition);
                 }
+                if (_testMode)
+                {
+                    SaveTestImport(definition);
+                }
+                else
+                {
+                    SaveImport(definition);
+                }
                 reader.Dispose();
+            }
+        }
+        /// <summary>Deletes existing Rows from Target Table</summary>
+        /// <param name="excelDefinition"></param>
+        private void ResetTable(ExcelDefinition excelDefinition)
+        {
+            SqlCommand command = new SqlCommand();
+            command.CommandText = String.Format("DELETE FROM {0}", excelDefinition.TargetTable);
+
+            using (var connection = new SqlConnection(excelDefinition.ConnectionString))
+            {
+                command.Connection = connection;
+                command.CommandType = CommandType.Text;
+                connection.Open();
+                int numberOfRecords = command.ExecuteNonQuery();
+                connection.Close();
+                Log.Info(String.Format("Executing Delete Command '{0}' -> {1} rows affected", command.CommandText, numberOfRecords));
             }
         }
         /// <summary>Persists Data in DataTable to Sql DB</summary>
         /// <param name="excelDefinition"></param>
         /// <param name="srcDataTable"></param>
-        public static void SaveBatchData(DataTable srcDataTable, ExcelDefinition excelDefinition)
+        public void SaveBatchData(DataTable srcDataTable, ExcelDefinition excelDefinition)
         {
+            rowCount = srcDataTable.Rows.Count;
+
             using (SqlBulkCopy bulkCopy = new SqlBulkCopy(excelDefinition.ConnectionString))
             {
                 bulkCopy.DestinationTableName = excelDefinition.TargetTable;
@@ -66,22 +101,71 @@ namespace toolkit.excel.data
                 }
             }
         }
-
         /// <summary>Persists Data in DataTable to Sql DB</summary>
         /// <param name="excelDefinition"></param>
         /// <param name="srcDataTable"></param>
-        public static void SaveRowData(DataTable srcDataTable, ExcelDefinition excelDefinition)
+        public void SaveRowData(DataTable srcDataTable, ExcelDefinition excelDefinition)
         {
             Log.Info(string.Format("Saving {0} Row(s)", srcDataTable.Rows.Count));
             foreach (DataRow row in srcDataTable.Rows)
-            InsertDataRow(row, excelDefinition);
+            {
+                InsertDataRow(row, excelDefinition);
+            }
+            rowCount = srcDataTable.Rows.Count;
+
+            if (srcDataTable.HasErrors)
+            {
+                SortedDictionary<int, string> errorList = new SortedDictionary<int, string>();
+                DataRow[] errorRows = srcDataTable.GetErrors();
+                foreach (var row in errorRows)
+                {
+                    errorList.Add(srcDataTable.Rows.IndexOf(row), row.RowError);
+                }
+                WriteBackErrors(errorList, excelDefinition);
+            }
+        }
+        /// <summary>Adds Error Comments to Sheet</summary>
+        public void WriteBackErrors(SortedDictionary<int, string> errorList,ExcelDefinition definition)
+        {
+            ExcelWorksheet excelWorksheet;
+            var fileinfo = new FileInfo(definition.FileName);
+            using (ExcelPackage pck = new ExcelPackage(fileinfo))
+            {
+                excelWorksheet = pck.Workbook.Worksheets[definition.SheetName];
+                ExcelRange wsCol = excelWorksheet.Cells[definition.Range];
+
+                int worksheetStartColumn = wsCol.Start.Column;
+                int worksheetStartRow = wsCol.Start.Row;
+                int worksheetEndRow = wsCol.End.Row;
+
+                if (definition.HasHeaderRow)
+                {
+                    worksheetStartRow = worksheetStartRow + 1;
+                }
+
+                foreach (var cell in excelWorksheet.Cells[worksheetStartRow, worksheetStartColumn, worksheetEndRow, worksheetStartColumn])
+                {
+                    if (cell.Comment != null)
+                    {
+                        if (cell.Comment.Author.Equals("Excel Importer"))
+                            excelWorksheet.Comments.Remove(cell.Comment);
+                    }
+                }
+
+                foreach (var error in errorList)
+                {
+                    var cell = excelWorksheet.Cells[worksheetStartRow + error.Key, worksheetStartColumn];
+                    cell.AddComment(error.Value, "Excel Importer");
+                }
+                pck.Save();
+            }
         }
         /// <summary>Creates SqlParameter for Insert Command</summary>
         /// <param name="sqlCommand"></param>
         /// <param name="parameterName"></param>
         /// <param name="sourceColumn"></param>
         /// <param name="insertValue"></param>
-        public static void InsertParameter(SqlCommand sqlCommand,
+        public void InsertParameter(SqlCommand sqlCommand,
             string parameterName,
             string sourceColumn,
             object insertValue)
@@ -98,7 +182,7 @@ namespace toolkit.excel.data
         /// <summary>Returns the Insert Statement</summary>
         /// <param name="srcDataTable"></param>
         /// <param name="excelDefinition"></param>
-        public static string BuildInsertSql(DataTable srcDataTable, ExcelDefinition excelDefinition)
+        public string BuildInsertSql(DataTable srcDataTable, ExcelDefinition excelDefinition)
         {
             srcDataTable.TableName = excelDefinition.TargetTable;
 
@@ -176,7 +260,7 @@ namespace toolkit.excel.data
         /// <summary>Builds the final SqlCommand</summary>
         /// <param name="dataRow"></param>
         /// <param name="excelDefinition"></param>
-        public static SqlCommand CreateInsertCommand(DataRow dataRow, ExcelDefinition excelDefinition)
+        public SqlCommand CreateInsertCommand(DataRow dataRow, ExcelDefinition excelDefinition)
         {
             var table = dataRow.Table;
             var sql = BuildInsertSql(table, excelDefinition);
@@ -208,7 +292,7 @@ namespace toolkit.excel.data
         /// <summary>Executes Insert Command for each row</summary>
         /// <param name="dataRow"></param>
         /// <param name="excelDefinition"></param>
-        public static void InsertDataRow(DataRow dataRow, ExcelDefinition excelDefinition)
+        public void InsertDataRow(DataRow dataRow, ExcelDefinition excelDefinition)
         {
             var command = CreateInsertCommand(dataRow, excelDefinition);
 
@@ -226,6 +310,7 @@ namespace toolkit.excel.data
                 }
                 catch (Exception ex)
                 {
+                    dataRow.RowError = ex.Message;
                     Log.Error(String.Format("Error Inserting Row {0} Table {1}", dataRow.Table.Rows.IndexOf(dataRow),dataRow.Table.TableName),ex);
                     connection.Close();
                 }
@@ -236,7 +321,7 @@ namespace toolkit.excel.data
         {
             using (var context = new ExcelDataContext())
             {
-                _excelDefinitions = context.ExcelDefinition.Include(u => u.ColumnMappings).ToList();
+                _excelDefinitions = context.ExcelDefinition.Include(u => u.ColumnMappings).Where(a=>a.IsActive).ToList();
                 Log.Info(string.Format("Found {0} Definition(s)", _excelDefinitions.Count));
             }
         }
@@ -245,8 +330,42 @@ namespace toolkit.excel.data
         {
             using (var context = new ExcelUnitTestDataContext())
             {
-                _excelDefinitions = context.ExcelDefinition.Include(u => u.ColumnMappings).ToList();
+                _excelDefinitions = context.ExcelDefinition.Include(u => u.ColumnMappings).Where(a => a.IsActive).ToList();
                 Log.Info(string.Format("Found {0} Definition(s)", _excelDefinitions.Count));
+            }
+        }
+        /// <summary>Returns all defined Excel Definitions from Unittest DB Context</summary>
+        public void SaveTestImport(ExcelDefinition definition)
+        {
+            using (var context = new ExcelUnitTestDataContext())
+            {
+                ExcelImport import = new ExcelImport();
+                import.ImportTimestamp = DateTime.Now;
+                import.RowsImported = rowCount;
+
+                definition.Imports.Add(import);
+                context.Entry(definition).State = EntityState.Modified;
+                context.SaveChanges();
+
+                context.Entry(import).State = EntityState.Added;
+                context.SaveChanges();
+            }
+        }
+        /// <summary>Returns all defined Excel Definitions from Unittest DB Context</summary>
+        public void SaveImport(ExcelDefinition definition)
+        {
+            using (var context = new ExcelDataContext())
+            {
+                ExcelImport import = new ExcelImport();
+                import.ImportTimestamp = DateTime.Now;
+                import.RowsImported = rowCount;
+
+                definition.Imports.Add(import);
+                context.Entry(definition).State = EntityState.Modified;
+                context.SaveChanges();
+
+                context.Entry(import).State = EntityState.Added;
+                context.SaveChanges();
             }
         }
     }

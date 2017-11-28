@@ -78,6 +78,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <Compile Include="DAL\DataAccess.cs" />
+    <Compile Include="DAL\ExcelImport.cs" />
     <Compile Include="TableHelper.cs" />
     <Compile Include="DAL\ExcelDataContext.cs" />
     <Compile Include="DAL\ExcelDefinition.cs" />

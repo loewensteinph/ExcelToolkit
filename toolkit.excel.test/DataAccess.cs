@@ -25,6 +25,13 @@ namespace toolkit.excel.test
     IntTest INT,
     GuidTest UNIQUEIDENTIFIER
 );");
+            ctx.Database.ExecuteSqlCommand(@"CREATE TABLE Test.UT1a
+(
+    StringTest NVARCHAR(MAX),
+    DecimalTest TINYINT,
+    IntTest INT,
+    GuidTest UNIQUEIDENTIFIER
+);");
             ctx.Database.ExecuteSqlCommand(@"
 CREATE TABLE Test.UT2
 (
@@ -34,7 +41,15 @@ CREATE TABLE Test.UT2
     GuidTest1 UNIQUEIDENTIFIER,
     DateTest DATETIME
 );");
-
+            ctx.Database.ExecuteSqlCommand(@"
+CREATE TABLE Test.UT3
+(
+    StringTest1 NVARCHAR(MAX),
+    DecimalTest1 DECIMAL(12,4),
+    IntTest1 INT,
+    GuidTest1 UNIQUEIDENTIFIER,
+    DateTest DATETIME
+);");
         }
 
         [TestMethod]

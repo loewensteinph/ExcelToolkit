@@ -18,7 +18,7 @@ namespace toolkit.excel.data
         private ILog Log = LogManager.GetLogger(typeof(ExcelReader));
 
         private readonly CultureInfo[] _cultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
-        private readonly HashSet<string> _patterns;
+        private HashSet<string> _patterns;
         public ExcelDefinition Exceldefinition;
         private readonly DataTable _rawDataTable = new DataTable();
         private readonly DataTable _finalDataTable = new DataTable();
@@ -31,27 +31,13 @@ namespace toolkit.excel.data
         private Int32 worksheetEndRow;
 
         /// <summary>Constructor Method</summary>
-        /// <param name="fileName">Location of Excel File</param>
-        /// <param name="sheetName">Name of Worksheet</param>
-        /// <param name="range">Excel Range i.e. A1:C5</param>
-        /// <param name="hasHeaderRow">Determines existance of Header Row</param>
+        /// <param name="definition">Excel Definition</param>
         public ExcelReader(ExcelDefinition definition)
         {
+            initializeCulture();
             Exceldefinition = definition;
             Log = LogManager.GetLogger(typeof(ExcelReader));
             Log.Info(string.Format("Starting Import: {0}", Exceldefinition.FileName));
-
-            _patterns = new HashSet<string>();
-
-            foreach (var culture in _cultures.Where(c => c.Name == "en-US" || c.Name == "de-DE"))
-            {
-                _patterns.UnionWith(culture.DateTimeFormat.GetAllDateTimePatterns('d'));
-                _patterns.UnionWith(culture.DateTimeFormat.GetAllDateTimePatterns('D'));
-                _patterns.UnionWith(culture.DateTimeFormat.GetAllDateTimePatterns('f'));
-                _patterns.UnionWith(culture.DateTimeFormat.GetAllDateTimePatterns('U'));
-                _patterns.UnionWith(culture.DateTimeFormat.GetAllDateTimePatterns('g'));
-                _patterns.UnionWith(culture.DateTimeFormat.GetAllDateTimePatterns('G'));
-            }
         }
 
         /// <summary>Constructor Method</summary>
@@ -61,6 +47,7 @@ namespace toolkit.excel.data
         /// <param name="hasHeaderRow">Determines existance of Header Row</param>
         public ExcelReader(string fileName, string sheetName, string range, bool hasHeaderRow)
         {
+            initializeCulture();
             Log = LogManager.GetLogger(typeof(ExcelReader));
             Log.Info(string.Format("Starting Import: {0}", fileName));
 
@@ -71,7 +58,9 @@ namespace toolkit.excel.data
                 FileName = fileName,
                 HasHeaderRow = hasHeaderRow
             };
-
+        }
+        private void initializeCulture()
+        {
             _patterns = new HashSet<string>();
 
             foreach (var culture in _cultures.Where(c => c.Name == "en-US" || c.Name == "de-DE"))
@@ -84,6 +73,7 @@ namespace toolkit.excel.data
                 _patterns.UnionWith(culture.DateTimeFormat.GetAllDateTimePatterns('G'));
             }
         }
+
         /// <summary>Checks existance of an Excel File</summary>
         /// <param name="fileName">Location of Excel File</param>
         private bool CheckFilePath(string fileName)
@@ -140,6 +130,15 @@ namespace toolkit.excel.data
                 worksheetEndColumn = wsCol.End.Column;
                 worksheetStartRow = wsCol.Start.Row;
                 worksheetEndRow = wsCol.End.Row;
+
+                if (Exceldefinition.RangeWidthAuto)
+                {
+                    worksheetEndColumn = excelWorksheet.Dimension.End.Column;
+                }
+                if (Exceldefinition.RangeHeightAuto)
+                {
+                    worksheetEndRow = excelWorksheet.Dimension.End.Row;
+                }
 
                 if (Exceldefinition.HasHeaderRow)
                 {
@@ -213,27 +212,20 @@ namespace toolkit.excel.data
                     endColumn = _rawDataTable.Columns.Count + 1;
                 }
 
-                ExcelRange wsRow = excelWorksheet.Cells[rowNum, worksheetStartColumn, rowNum, endColumn];
+                ExcelRange wsRow = excelWorksheet.Cells[rowNum, worksheetStartColumn, rowNum, worksheetEndColumn];
 
-                Int32 cellsWithoutContent = 0;
-                foreach (ExcelRangeBase cell in wsRow)
+                foreach (var cell in wsRow)
                 {
-                    if (String.IsNullOrEmpty(cell.Text) || String.IsNullOrWhiteSpace(cell.Text))
-                        cellsWithoutContent++;
+                    int colIndex =  Math.Abs(wsRow.Start.Column - cell.Start.Column);
+
+                    DataColumn dataColumn = _rawDataTable.Columns[colIndex];
+                    row[dataColumn.ColumnName] = cell.Value;
+                    if (cell.Text.Equals("NULL"))
+                        row[colIndex] = DBNull.Value;
+                    else
+                        row[colIndex] = cell.Text;
                 }
-                if (_rawDataTable.Columns.Count - cellsWithoutContent > 0)
-                {
-                    foreach (var cell in wsRow)
-                    {
-                        DataColumn dataColumn = _rawDataTable.Columns[cell.Start.Column - 1];
-                        row[dataColumn.ColumnName] = cell.Value;
-                        if (cell.Text.Equals("NULL"))
-                            row[cell.Start.Column - 1] = DBNull.Value;
-                        else
-                            row[cell.Start.Column - 1] = cell.Text;
-                    }
-                    _rawDataTable.Rows.Add(row);
-                }
+                _rawDataTable.Rows.Add(row);
             }
             _rawDataTable.Rows.Cast<DataRow>().ToList().FindAll(row => String.IsNullOrEmpty(String.Join("", row.ItemArray))).ForEach(Row =>
                 { _rawDataTable.Rows.Remove(Row); });

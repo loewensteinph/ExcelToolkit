@@ -46,3 +46,4 @@ C:\Users\Philip\Source\Repos\ExcelToolkit\toolkit.excel.test\bin\Debug\TestWorkb
 C:\Users\Philip\Source\Repos\ExcelToolkit\toolkit.excel.test\bin\Debug\TestWorkbooks\TestWB.xlsx
 C:\Users\Philip\Source\Repos\ExcelToolkit\toolkit.excel.test\bin\Debug\TestWorkbooks\UT2.xlsx
 C:\Users\Philip\Source\Repos\ExcelToolkit\toolkit.excel.test\bin\Debug\toolkit.excel.data.xml
+C:\Users\Philip\Source\Repos\ExcelToolkit\toolkit.excel.test\bin\Debug\TestWorkbooks\UT3.xlsx
