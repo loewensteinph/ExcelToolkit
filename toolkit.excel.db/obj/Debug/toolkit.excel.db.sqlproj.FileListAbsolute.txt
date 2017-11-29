@@ -1,9 +1,0 @@
-C:\Users\Philip\Source\Repos\ExcelToolkit\toolkit.excel.db\obj\Debug\toolkit.excel.db.dll
-C:\Users\Philip\Source\Repos\ExcelToolkit\toolkit.excel.db\obj\Debug\toolkit.excel.db.pdb
-C:\Users\Philip\Source\Repos\ExcelToolkit\toolkit.excel.db\bin\Debug\toolkit.excel.db.dacpac
-C:\Users\Philip\Source\Repos\ExcelToolkit\toolkit.excel.db\bin\Debug\toolkit.excel.db.dll
-C:\Users\Philip\Source\Repos\ExcelToolkit\toolkit.excel.db\bin\Debug\toolkit.excel.db.pdb
-C:\Users\Philip\Source\Repos\ExcelToolkit\toolkit.excel.db\obj\Debug\Model.xml
-C:\Users\Philip\Source\Repos\ExcelToolkit\toolkit.excel.db\obj\Debug\refactor.xml
-C:\Users\Philip\Source\Repos\ExcelToolkit\toolkit.excel.db\obj\Debug\postdeploy.sql
-C:\Users\Philip\Source\Repos\ExcelToolkit\toolkit.excel.db\obj\Debug\predeploy.sql
