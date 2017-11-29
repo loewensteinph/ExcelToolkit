@@ -3,3 +3,15 @@
 ################################################################################
 /.vs
 /.vs/ExcelToolkit/v15/Server/sqlite3
+/packages
+/toolkit.excel.console/bin/Debug
+/toolkit.excel.console/obj/Debug
+/toolkit.excel.data/bin/Debug
+/toolkit.excel.data/obj/Debug
+/toolkit.excel.test/bin/Debug
+/toolkit.excel.test/obj/Debug
+/toolkit.excel.db/bin/Debug
+/toolkit.excel.db/obj/Debug
+/toolkit.excel.db/toolkit.excel.db.dbmdl
+/toolkit.excel.db/toolkit.excel.db.jfm
+*.user
