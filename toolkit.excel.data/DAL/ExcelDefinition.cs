@@ -1,11 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace toolkit.excel.data
 {
     /// <summary>
     /// Represents an Excel Import as Database Table
     /// </summary>  
+    [Table("ExcelDefinition", Schema = "ctrl")]
     public class ExcelDefinition
     {
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
@@ -20,6 +22,7 @@ namespace toolkit.excel.data
         public string FileName { get; set; }
         public string SheetName { get; set; }
         public string Range { get; set; }
+        public string Annotation { get; set; }
         public bool RangeWidthAuto { get; set; }
         public bool RangeHeightAuto { get; set; }
         public string TargetTable { get; set; }
@@ -28,12 +31,14 @@ namespace toolkit.excel.data
         public bool DeleteBeforeImport { get; set; }
         public bool BulkInsert { get; set; }
         public bool ValidateDataTypes { get; set; }
+        public bool RollbackOnError { get; set; }
         public List<ColumnMapping> ColumnMappings { get; set; }
         public List<ExcelImport> Imports { get; set; }
     }
     /// <summary>
     /// Represents Columns of an Excel Import as Database Table
     /// </summary>  
+    [Table("ColumnMapping", Schema = "ctrl")]
     public class ColumnMapping
     {
         [Key]

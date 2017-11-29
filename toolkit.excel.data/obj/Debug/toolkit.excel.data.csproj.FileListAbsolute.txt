@@ -15,6 +15,7 @@ c:\users\philip\documents\visual studio 2017\Projects\ExcelToolkit\toolkit.excel
 C:\Users\Philip\documents\visual studio 2017\Projects\ExcelToolkit\toolkit.excel.data\obj\Debug\toolkit.excel.data.csprojResolveAssemblyReference.cache
 C:\Users\Philip\Source\Repos\ExcelToolkit\toolkit.excel.data\bin\Debug\Log4Net.config
 C:\Users\Philip\Source\Repos\ExcelToolkit\toolkit.excel.data\bin\Debug\toolkit.excel.data.dll.config
+C:\Users\Philip\Source\Repos\ExcelToolkit\toolkit.excel.data\bin\Debug\toolkit.excel.data.xml
 C:\Users\Philip\Source\Repos\ExcelToolkit\toolkit.excel.data\bin\Debug\toolkit.excel.data.dll
 C:\Users\Philip\Source\Repos\ExcelToolkit\toolkit.excel.data\bin\Debug\toolkit.excel.data.pdb
 C:\Users\Philip\Source\Repos\ExcelToolkit\toolkit.excel.data\bin\Debug\DocumentFormat.OpenXml.dll
@@ -27,6 +28,7 @@ C:\Users\Philip\Source\Repos\ExcelToolkit\toolkit.excel.data\bin\Debug\NPOI.dll
 C:\Users\Philip\Source\Repos\ExcelToolkit\toolkit.excel.data\bin\Debug\NPOI.OOXML.dll
 C:\Users\Philip\Source\Repos\ExcelToolkit\toolkit.excel.data\bin\Debug\NPOI.OpenXml4Net.dll
 C:\Users\Philip\Source\Repos\ExcelToolkit\toolkit.excel.data\bin\Debug\NPOI.OpenXmlFormats.dll
+C:\Users\Philip\Source\Repos\ExcelToolkit\toolkit.excel.data\bin\Debug\System.Data.dll
 C:\Users\Philip\Source\Repos\ExcelToolkit\toolkit.excel.data\bin\Debug\DocumentFormat.OpenXml.xml
 C:\Users\Philip\Source\Repos\ExcelToolkit\toolkit.excel.data\bin\Debug\EntityFramework.xml
 C:\Users\Philip\Source\Repos\ExcelToolkit\toolkit.excel.data\bin\Debug\EntityFramework.SqlServer.xml
@@ -36,6 +38,3 @@ C:\Users\Philip\Source\Repos\ExcelToolkit\toolkit.excel.data\bin\Debug\NPOI.xml
 C:\Users\Philip\Source\Repos\ExcelToolkit\toolkit.excel.data\obj\Debug\toolkit.excel.data.csproj.CoreCompileInputs.cache
 C:\Users\Philip\Source\Repos\ExcelToolkit\toolkit.excel.data\obj\Debug\toolkit.excel.data.dll
 C:\Users\Philip\Source\Repos\ExcelToolkit\toolkit.excel.data\obj\Debug\toolkit.excel.data.pdb
-C:\Users\Philip\Source\Repos\ExcelToolkit\toolkit.excel.data\bin\Debug\System.Data.dll
-C:\Users\Philip\Source\Repos\ExcelToolkit\toolkit.excel.data\bin\Debug\toolkit.excel.data.xml
-C:\Users\Philip\Source\Repos\ExcelToolkit\toolkit.excel.data\obj\Debug\toolkit.excel.data.csprojResolveAssemblyReference.cache

@@ -18,6 +18,7 @@ namespace toolkit.excel.data
         private List<ExcelDefinition> _excelDefinitions;
         private bool _testMode;
         private int rowCount;
+        private int errorRowCount;
         /// <summary>Default Constructor</summary>
         public DataAccess()
         {
@@ -34,6 +35,7 @@ namespace toolkit.excel.data
         {
             foreach (var definition in _excelDefinitions)
             {
+                errorRowCount = 0;
                 var reader = new ExcelReader(definition);
                 var result = reader.Read();
 
@@ -51,6 +53,7 @@ namespace toolkit.excel.data
                 {
                     SaveBatchData(result, definition);
                 }
+
                 if (_testMode)
                 {
                     SaveTestImport(definition);
@@ -122,6 +125,11 @@ namespace toolkit.excel.data
                 {
                     errorList.Add(srcDataTable.Rows.IndexOf(row), row.RowError);
                 }
+                if(excelDefinition.RollbackOnError)
+                {
+                    Log.Error(string.Format("Error occured! Rolling back imported Data {0} rows.",srcDataTable.Rows.Count));
+                    ResetTable(excelDefinition);
+                }
             }
             WriteBackErrors(errorList, excelDefinition);
         }
@@ -155,6 +163,11 @@ namespace toolkit.excel.data
                     }
                 }
 
+                if (errorList.Count > 0)
+                {
+                    Log.Error(string.Format("Error occured! Adding Error Comments to Excel Workbook {0}", definition.FileName));
+                    errorRowCount = errorList.Count;
+                }
                 foreach (var error in errorList)
                 {
                     var cell = excelWorksheet.Cells[worksheetStartRow + error.Key, worksheetStartColumn];
@@ -345,6 +358,10 @@ namespace toolkit.excel.data
                 ExcelImport import = new ExcelImport();
                 import.ImportTimestamp = DateTime.Now;
                 import.RowsImported = rowCount;
+                import.RowsWithErrors = errorRowCount;
+                import.ResultStatus = "VALID";
+                if (errorRowCount > 0)
+                    import.ResultStatus = "ERROR";
 
                 definition.Imports.Add(import);
                 context.Entry(definition).State = EntityState.Modified;
@@ -362,6 +379,10 @@ namespace toolkit.excel.data
                 ExcelImport import = new ExcelImport();
                 import.ImportTimestamp = DateTime.Now;
                 import.RowsImported = rowCount;
+                import.RowsWithErrors = errorRowCount;
+                import.ResultStatus = "VALID";
+                if (errorRowCount > 0)
+                    import.ResultStatus = "ERROR";
 
                 definition.Imports.Add(import);
                 context.Entry(definition).State = EntityState.Modified;

@@ -1,0 +1,84 @@
+29.11.2017 08:29:43	This log contains information about the import schema operation into project 'toolkit.excel.db' on computer 'ARMOR' by user 'Philip'.
+29.11.2017 08:29:43	Import of database schema has started.
+29.11.2017 08:29:46	Gathering database credentials
+29.11.2017 08:29:46	Gathering database options
+29.11.2017 08:29:46	Gathering users
+29.11.2017 08:29:46	Gathering roles
+29.11.2017 08:29:46	Gathering application roles
+29.11.2017 08:29:46	Gathering role memberships
+29.11.2017 08:29:46	Gathering filegroups
+29.11.2017 08:29:46	Gathering full-text catalogs
+29.11.2017 08:29:46	Gathering assemblies
+29.11.2017 08:29:46	Gathering certificates
+29.11.2017 08:29:46	Gathering asymmetric keys
+29.11.2017 08:29:46	Gathering symmetric keys
+29.11.2017 08:29:46	Gathering encrypted symmetric keys
+29.11.2017 08:29:46	Gathering schemas
+29.11.2017 08:29:46	Gathering XML schema collections
+29.11.2017 08:29:46	Gathering user-defined data types
+29.11.2017 08:29:46	Gathering user-defined types
+29.11.2017 08:29:46	Gathering table types
+29.11.2017 08:29:46	Gathering unique keys for table types
+29.11.2017 08:29:46	Gathering primary keys for table types
+29.11.2017 08:29:46	Gathering indexes for table types
+29.11.2017 08:29:46	Gathering check constraints for table types
+29.11.2017 08:29:46	Gathering default constraints for table types
+29.11.2017 08:29:46	Gathering partition functions
+29.11.2017 08:29:47	Gathering partition schemes
+29.11.2017 08:29:47	Gathering functions
+29.11.2017 08:29:47	Gathering encrypted functions
+29.11.2017 08:29:47	Gathering aggregates
+29.11.2017 08:29:47	Gathering procedures
+29.11.2017 08:29:47	Gathering encrypted procedures
+29.11.2017 08:29:47	Gathering tables
+29.11.2017 08:29:47	Gathering primary keys
+29.11.2017 08:29:47	Gathering unique constraints
+29.11.2017 08:29:47	Gathering foreign keys
+29.11.2017 08:29:47	Gathering default constraints
+29.11.2017 08:29:47	Gathering check constraints
+29.11.2017 08:29:47	Gathering views
+29.11.2017 08:29:47	Gathering encrypted views
+29.11.2017 08:29:47	Gathering indexes
+29.11.2017 08:29:47	Gathering statistics
+29.11.2017 08:29:47	Gathering full-text index stoplists
+29.11.2017 08:29:47	Gathering search property lists
+29.11.2017 08:29:47	Gathering search properties
+29.11.2017 08:29:47	Gathering full-text indexes
+29.11.2017 08:29:47	Gathering column store indexes
+29.11.2017 08:29:47	Gathering spatial indexes
+29.11.2017 08:29:47	Gathering XML indexes
+29.11.2017 08:29:47	Gathering Selective XML indexes
+29.11.2017 08:29:47	Gathering encrypted triggers
+29.11.2017 08:29:47	Gathering triggers
+29.11.2017 08:29:47	Gathering encrypted and clr ddl triggers
+29.11.2017 08:29:47	Gathering ddl triggers
+29.11.2017 08:29:47	Gathering synonyms
+29.11.2017 08:29:47	Gathering defaults
+29.11.2017 08:29:47	Gathering data constraint uddt bindings
+29.11.2017 08:29:47	Gathering rules
+29.11.2017 08:29:47	Gathering data constraint uddt bindings
+29.11.2017 08:29:47	Gathering message types
+29.11.2017 08:29:47	Gathering queues
+29.11.2017 08:29:47	Gathering contracts
+29.11.2017 08:29:47	Gathering services
+29.11.2017 08:29:47	Gathering event notifications
+29.11.2017 08:29:47	Gathering remote service bindings
+29.11.2017 08:29:47	Gathering broker priorities
+29.11.2017 08:29:47	Gathering signatures
+29.11.2017 08:29:47	Gathering data compression options
+29.11.2017 08:29:47	Gathering sequence types
+29.11.2017 08:29:47	Gathering security policies
+29.11.2017 08:29:47	Gather column encryption keys
+29.11.2017 08:29:47	Gathering column master keys
+29.11.2017 08:29:47	Gathering external data sources
+29.11.2017 08:29:47	Gathering external file formats
+29.11.2017 08:29:47	Gathering external tables
+29.11.2017 08:29:47	Gathering extended properties
+29.11.2017 08:29:47	Gathering credentials
+29.11.2017 08:29:47	Gathering logins
+29.11.2017 08:29:47	Gathering server audits
+29.11.2017 08:29:48	Scanning project for duplicate elements
+29.11.2017 08:29:48	Finished duplicate element processing
+29.11.2017 08:29:48	Finished importing database.
+29.11.2017 08:29:48	A summary of the import was saved to the following location: C:\Users\Philip\Source\Repos\ExcelToolkit\toolkit.excel.db\Import Schema Logs\toolkit.excel.db_20171129072943.log
+29.11.2017 08:29:48	Click Finish to continue...

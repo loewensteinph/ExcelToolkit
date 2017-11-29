@@ -8,9 +8,10 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>toolkit.excel.console</RootNamespace>
     <AssemblyName>toolkit.excel.console</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -55,11 +56,32 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-    <None Include="packages.config" />
-    <None Include="TestWB.xlsx">
+    <None Include="..\toolkit.excel.test\TestWorkbooks\TestWB.xlsx">
+      <Link>TestWorkbooks\TestWB.xlsx</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="..\toolkit.excel.test\TestWorkbooks\TestWBBig.xlsx">
+      <Link>TestWorkbooks\TestWBBig.xlsx</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="..\toolkit.excel.test\TestWorkbooks\TestWBDateTime.xlsx">
+      <Link>TestWorkbooks\TestWBDateTime.xlsx</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="..\toolkit.excel.test\TestWorkbooks\UT1.xlsx">
+      <Link>TestWorkbooks\UT1.xlsx</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="..\toolkit.excel.test\TestWorkbooks\UT2.xlsx">
+      <Link>TestWorkbooks\UT2.xlsx</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="..\toolkit.excel.test\TestWorkbooks\UT3.xlsx">
+      <Link>TestWorkbooks\UT3.xlsx</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="App.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\toolkit.excel.data\toolkit.excel.data.csproj">

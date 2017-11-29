@@ -6,9 +6,8 @@ namespace toolkit.excel.console
     {
         private static void Main(string[] args)
         {
-            var reader = new ExcelReader("TestWB.xlsx", "Sheet1", "A1:A4", true);
-            var result = reader.Read();
-            reader.Dispose();
+            DataAccess da = new DataAccess(false);
+            da.ProcessDefinitions();
         }
     }
 }

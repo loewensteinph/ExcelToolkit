@@ -17,15 +17,17 @@ namespace toolkit.excel.test
             Database.SetInitializer<ExcelUnitTestDataContext>(new ExcelDataContextSeedInitializer());
             ctx.Database.Initialize(true);
 
-            ctx.Database.ExecuteSqlCommand(@"CREATE SCHEMA Test;");
-            ctx.Database.ExecuteSqlCommand(@"CREATE TABLE Test.UT1
+            ctx.Database.ExecuteSqlCommand(@"CREATE SCHEMA unittest;");
+            ctx.Database.ExecuteSqlCommand(@"
+CREATE TABLE unittest.UT1
 (
     StringTest NVARCHAR(MAX),
     DecimalTest DECIMAL(12,4),
     IntTest INT,
     GuidTest UNIQUEIDENTIFIER
 );");
-            ctx.Database.ExecuteSqlCommand(@"CREATE TABLE Test.UT1a
+            ctx.Database.ExecuteSqlCommand(@"
+CREATE TABLE unittest.UT1a
 (
     StringTest NVARCHAR(MAX),
     DecimalTest TINYINT,
@@ -33,7 +35,7 @@ namespace toolkit.excel.test
     GuidTest UNIQUEIDENTIFIER
 );");
             ctx.Database.ExecuteSqlCommand(@"
-CREATE TABLE Test.UT2
+CREATE TABLE unittest.UT2
 (
     StringTest1 NVARCHAR(MAX),
     DecimalTest1 DECIMAL(12,4),
@@ -42,7 +44,7 @@ CREATE TABLE Test.UT2
     DateTest DATETIME
 );");
             ctx.Database.ExecuteSqlCommand(@"
-CREATE TABLE Test.UT3
+CREATE TABLE unittest.UT3
 (
     StringTest1 NVARCHAR(MAX),
     DecimalTest1 DECIMAL(12,4),
@@ -53,9 +55,9 @@ CREATE TABLE Test.UT3
         }
 
         [TestMethod]
-        public void Test1()
+        public void JobProcessing()
         {
-            var da = new data.DataAccess(true);
+            data.DataAccess da = new data.DataAccess(true);
             da.ProcessDefinitions();
             Assert.AreEqual(12, 12);
         }

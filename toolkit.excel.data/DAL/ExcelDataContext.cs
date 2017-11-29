@@ -55,11 +55,12 @@ namespace toolkit.excel.data
                 Range = "A1:D5",
                 RangeHeightAuto = false,
                 RangeWidthAuto = false,
-                TargetTable = "Test.UT1",
+                TargetTable = "unittest.UT1",
                 ValidateDataTypes = true,
                 BulkInsert = false,
                 DeleteBeforeImport = true,
-                IsActive = false,
+                RollbackOnError = true,
+                IsActive = true,
                 ConnectionString = "Data Source=.;Initial Catalog=ExcelDBUNitTest;Integrated Security=true"
             };
 
@@ -82,10 +83,11 @@ namespace toolkit.excel.data
                 Range = "M14:P18",
                 RangeHeightAuto = false,
                 RangeWidthAuto = false,
-                TargetTable = "Test.UT1a",
+                TargetTable = "unittest.UT1a",
                 ValidateDataTypes = false,
                 BulkInsert = false,
                 DeleteBeforeImport = true,
+                RollbackOnError = true,
                 IsActive = true,
                 ConnectionString = "Data Source=.;Initial Catalog=ExcelDBUNitTest;Integrated Security=true"
             };
@@ -109,10 +111,12 @@ namespace toolkit.excel.data
                 Range = "A1:E5",
                 RangeHeightAuto = false,
                 RangeWidthAuto = false,
-                TargetTable = "Test.UT2",
+                TargetTable = "unittest.UT2",
                 ValidateDataTypes = true,
+                RollbackOnError = true,
+                DeleteBeforeImport = true,
                 BulkInsert = true,
-                IsActive = false,
+                IsActive = true,
                 ConnectionString = "Data Source=.;Initial Catalog=ExcelDBUNitTest;Integrated Security=true"
             };
 
@@ -137,10 +141,12 @@ namespace toolkit.excel.data
                 Range = "A1:A1",
                 RangeHeightAuto = true,
                 RangeWidthAuto = true,
-                TargetTable = "Test.UT3",
+                TargetTable = "unittest.UT3",
                 ValidateDataTypes = true,
+                RollbackOnError = true,
+                DeleteBeforeImport = true,
                 BulkInsert = true,
-                IsActive = false,
+                IsActive = true,
                 ConnectionString = "Data Source=.;Initial Catalog=ExcelDBUNitTest;Integrated Security=true"
             };
 

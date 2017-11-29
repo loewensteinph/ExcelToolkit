@@ -8,6 +8,7 @@ using log4net;
 using log4net.Appender;
 using log4net.Config;
 using log4net.Repository.Hierarchy;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace toolkit.excel.data
 {
@@ -42,6 +43,7 @@ namespace toolkit.excel.data
     /// <summary>
     /// Log Database Table OR Mapping
     /// </summary>  
+    [Table("Log4Net", Schema = "log")]
     public class Log
     {
         [Key]
